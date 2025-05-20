@@ -1,0 +1,3059 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorial - Paulo Mazza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        /* ESTILOS GERAIS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .splash-container {
+            position: relative;
+            min-height: 100vh;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Estrutura da Capela */
+        .chapel-header {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 60px auto 60px;
+            padding-top: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chapel-arch {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(180deg,
+                    transparent,
+                    rgba(197, 164, 127, 0.02) 20%,
+                    rgba(197, 164, 127, 0.03) 40%);
+            border-top: 2px solid rgba(197, 164, 127, 0.25);
+            border-top-left-radius: 120px;
+            border-top-right-radius: 120px;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        .chapel-arch::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 0.9),
+                    transparent 70%);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: archLight 6s linear infinite;
+            transform-origin: 0 82px;
+        }
+
+        .arch-light {
+            box-shadow: 0 0 15px rgba(197, 164, 127, 0.6),
+                       0 0 30px rgba(197, 164, 127, 0.3);
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes archLight {
+            0% {
+                transform: rotate(-90deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            45%,
+            55% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(90deg);
+                opacity: 0;
+            }
+        }
+
+        .chapel-arch::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(197, 164, 127, 0.4) 20%,
+                    rgba(197, 164, 127, 0.4) 80%,
+                    transparent);
+            border-top-left-radius: 120px;
+            border-top-right-radius: 120px;
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+
+        .chapel-cross {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(197, 164, 127, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            box-shadow: 0 0 15px rgba(197, 164, 127, 0.2);
+        }
+
+        .chapel-cross i {
+            color: rgba(197, 164, 127, 0.8);
+            font-size: 1.4rem;
+            text-shadow: 0 0 8px rgba(197, 164, 127, 0.3);
+        }
+
+        .splash-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: #c5a47f;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -20%);
+            margin: 0;
+            text-align: center;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            text-shadow:
+                1px 1px 2px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(197, 164, 127, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.1);
+            width: auto;
+            z-index: 2;
+        }
+
+        .family-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .family-member {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            flex: 0 1 300px;
+            min-height: 400px;
+            background: linear-gradient(180deg,
+                    rgba(197, 164, 127, 0.15) 0%,
+                    rgba(197, 164, 127, 0.05) 100%);
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            border-radius: 10px 10px 0 0;
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .family-member::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(197, 164, 127, 0.1);
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            box-shadow:
+                0 0 20px rgba(197, 164, 127, 0.2),
+                0 0 40px rgba(197, 164, 127, 0.1);
+        }
+
+        .family-member::after {
+            content: '✝';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(197, 164, 127, 0.8);
+            font-size: 24px;
+            z-index: 2;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(197, 164, 127, 0.4);
+        }
+
+        .family-member .member-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: rgba(26, 26, 26, 0.7);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .family-member img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid rgba(197, 164, 127, 0.5);
+            margin-bottom: 20px;
+            box-shadow:
+                0 0 20px rgba(197, 164, 127, 0.2),
+                0 0 40px rgba(197, 164, 127, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .member-name {
+            color: #c5a47f;
+            font-size: 2em;
+            font-family: 'Great Vibes', cursive;
+            margin: 15px 0;
+            text-align: center;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(197, 164, 127, 0.4);
+        }
+
+        .member-dates {
+            color: rgba(197, 164, 127, 0.7);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1em;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .family-member:hover {
+            transform: translateY(-10px);
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(197, 164, 127, 0.2);
+        }
+
+        .family-member:hover img {
+            border-color: rgba(197, 164, 127, 0.8);
+            box-shadow:
+                0 0 30px rgba(197, 164, 127, 0.4),
+                0 0 60px rgba(197, 164, 127, 0.2);
+        }
+
+        .family-member:hover .member-name {
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(197, 164, 127, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .family-grid {
+                gap: 30px;
+                padding: 30px;
+            }
+
+            .family-member {
+                flex: 0 1 280px;
+                min-height: 380px;
+                padding: 25px;
+            }
+
+            .chapel-header {
+                margin: 45px auto 50px;
+                padding-top: 30px;
+            }
+
+            .splash-title {
+                font-size: 3.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .family-grid {
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .family-member {
+                flex: 0 1 260px;
+                min-height: 360px;
+                padding: 20px;
+            }
+
+            .chapel-header {
+                margin: 30px auto 40px;
+                padding-top: 25px;
+            }
+
+            .splash-title {
+                font-size: 2.8rem;
+            }
+        }
+
+        /* BOTÃO VOLTAR */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: #c5a47f;
+            background: rgba(197, 164, 127, 0.05);
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            display: none;
+            /* Garante que o botão comece oculto */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(197, 164, 127, 0.15);
+            border-color: #c5a47f;
+            box-shadow: 0 6px 20px rgba(197, 164, 127, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .back-button:hover i {
+            transform: scale(1.1);
+        }
+
+        /* MEMORIAL */
+        .memorial-container {
+            display: none;
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .memorial-content {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* BLOCO 1: Foto de capa e perfil */
+        .cover-block {
+            position: relative;
+            width: 100%;
+            height: auto;
+            margin-bottom: 40px;
+            /* Reduced from 80px */
+        }
+
+        .cover-section {
+            position: relative;
+            width: 100%;
+            padding-top: 40%;
+            /* Reduced from 45% to make cover photo slightly smaller */
+            overflow: visible;
+            background: transparent;
+            z-index: 1;
+        }
+
+        #coverStarsContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .cover-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo {
+            position: absolute;
+            left: 50%;
+            bottom: -60px;
+            /* Reduced from -80px */
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 3px solid rgba(197, 164, 127, 0.8);
+            background: #1a1a1a;
+            object-fit: cover;
+            z-index: 3;
+            box-shadow:
+                0 0 20px rgba(197, 164, 127, 0.3),
+                0 0 40px rgba(197, 164, 127, 0.2),
+                0 0 60px rgba(197, 164, 127, 0.1),
+                0 0 80px rgba(197, 164, 127, 0.05);
+        }
+
+        .profile-photo::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 0.4) 0%,
+                    rgba(197, 164, 127, 0.2) 40%,
+                    rgba(197, 164, 127, 0.1) 60%,
+                    transparent 80%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulseAura 3s ease-in-out infinite;
+        }
+
+        .profile-photo::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: radial-gradient(circle at center,
+                    rgba(255, 255, 255, 0.8) 0%,
+                    rgba(255, 255, 255, 0.1) 40%,
+                    transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(5px);
+            animation: shimmerAura 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseAura {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes shimmerAura {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05) rotate(180deg);
+            }
+        }
+
+        /* BLOCO 2: Data de morte */
+        .dates-block {
+            position: relative;
+            width: 100%;
+            padding: 5px 0;
+            /* Reduced from 10px */
+            margin-bottom: 20px;
+            /* Reduced from 40px */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-dates {
+            position: relative;
+            color: #c5a47f;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            white-space: nowrap;
+            padding: 10px 20px;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            width: fit-content;
+            overflow: hidden;
+        }
+
+        /* BLOCO 3: Conteúdo principal */
+        .content-block {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Ajuste do main-container para centralizar e manter largura adequada */
+        .main-container {
+            margin: 20px auto;
+            width: 98%; /* Increased from 95% */
+            max-width: 1800px; /* Increased from 1400px */
+            padding: 20px;
+            background: transparent;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .tab-buttons {
+            flex-shrink: 0;
+            /* Impede que os botões encolham */
+        }
+
+        /* Ajuste para o container de conteúdo das tabs */
+        .tab-content-container {
+            width: 100%;
+            max-width: 1200px; /* Increased from 800px */
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tab-content {
+            width: 100%;
+            max-width: 1600px; /* Increased from 1200px */
+            padding: 40px; /* Increased from 30px */
+            box-sizing: border-box;
+            background: transparent;
+            height: auto;
+            overflow-y: visible;
+            position: relative;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Estilizar a barra de rolagem */
+        .tab-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tab-content::-webkit-scrollbar-track {
+            background: rgba(197, 164, 127, 0.1);
+            border-radius: 4px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb {
+            background: rgba(197, 164, 127, 0.3);
+            border-radius: 4px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(197, 164, 127, 0.5);
+        }
+
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 10px 0 20px;
+            padding: 10px 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #c5a47f;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            border-color: #c5a47f;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                margin-top: 20px;
+                /* Reduced from 160px */
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                margin-top: 20px;
+                /* Reduced from 150px */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .memorial-content {
+                gap: 25px;
+            }
+
+            .cover-block {
+                margin-bottom: 70px;
+            }
+
+            .cover-section {
+                padding-top: 50%;
+            }
+
+            .dates-block {
+                padding-top: 20px;
+                margin-bottom: 30px;
+            }
+
+            .profile-photo {
+                width: 140px;
+                height: 140px;
+                bottom: -70px;
+            }
+
+            .profile-dates {
+                font-size: 1.1rem;
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .memorial-content {
+                gap: 20px;
+            }
+
+            .cover-block {
+                margin-bottom: 60px;
+            }
+
+            .cover-section {
+                padding-top: 60%;
+            }
+
+            .dates-block {
+                padding-top: 15px;
+                margin-bottom: 25px;
+            }
+
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+                bottom: -60px;
+            }
+
+            .profile-dates {
+                font-size: 1rem;
+                padding: 6px 14px;
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .memorial-content {
+                gap: 15px;
+            }
+
+            .cover-block {
+                margin-bottom: 50px;
+            }
+
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+                bottom: -40px;
+            }
+
+            .profile-dates {
+                font-size: 0.95rem;
+                padding: 12px;
+                width: 85%;
+            }
+        }
+
+        /* Ajuste para modo paisagem */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .main-container {
+                margin-top: 150px;
+            }
+        }
+
+        /* Ajuste para garantir que o conteúdo não fique muito próximo do topo em telas pequenas */
+        @media (max-height: 600px) {
+            .main-container {
+                margin-top: 20px;
+                /* Reduced from 110px */
+            }
+        }
+
+        /* Ajuste para telas muito baixas */
+        @media (max-height: 500px) {
+            .main-container {
+                margin-top: 20px;
+                /* Reduced from 120px */
+                height: calc(100vh - 140px);
+            }
+        }
+
+        /* Estilos base para todas as seções */
+        .tab-content {
+            width: 33.333%;
+            padding: 30px;
+            box-sizing: border-box;
+            background: transparent;
+        }
+
+        .tab-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: #c5a47f;
+            border-bottom: 2px solid #c5a47f;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        /* Estilos específicos para Biografia */
+        #biografia-paulo,
+        #biografia-maria,
+        #biografia-joao,
+        #biografia-ana,
+        #biografia-carlos,
+        #biografia-lucia {
+            background: rgba(45, 45, 45, 0.95);
+            padding: 60px; /* Increased from 40px */
+            border-radius: 15px;
+            margin: 0 auto;
+            max-width: 1600px; /* Increased from 1200px */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.1);
+            animation: borderGlow 4s ease-in-out infinite;
+            width: 100%;
+        }
+
+        #biografia-paulo::before,
+        #biografia-paulo::after,
+        #biografia-maria::before,
+        #biografia-maria::after,
+        #biografia-joao::before,
+        #biografia-joao::after,
+        #biografia-ana::before,
+        #biografia-ana::after,
+        #biografia-carlos::before,
+        #biografia-carlos::after,
+        #biografia-lucia::before,
+        #biografia-lucia::after {
+            display: none;
+        }
+
+        #biografia-paulo h2,
+        #biografia-maria h2,
+        #biografia-joao h2,
+        #biografia-ana h2,
+        #biografia-carlos h2,
+        #biografia-lucia h2 {
+            font-family: 'Great Vibes', cursive;
+            color: #c5a47f;
+            font-size: 2.8rem;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            position: relative;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(197, 164, 127, 0.4);
+        }
+
+        #biografia-paulo p,
+        #biografia-maria p,
+        #biografia-joao p,
+        #biografia-ana p,
+        #biografia-carlos p,
+        #biografia-lucia p {
+            font-size: 1.2rem;
+            line-height: 2;
+            text-align: justify;
+            color: #e0e0e0;
+            padding: 35px;
+            background: rgba(26, 26, 26, 0.7);
+            border-radius: 10px;
+            margin: 25px 0;
+            position: relative;
+            border-left: 3px solid #c5a47f;
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.2),
+                0 0 20px rgba(197, 164, 127, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            /* Novos estilos para formatação de texto */
+            white-space: pre-line;
+            word-wrap: break-word;
+            word-break: normal;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+        }
+
+        /* Ajuste específico para parágrafos dentro da biografia */
+        #biografia-paulo p strong,
+        #biografia-maria p strong,
+        #biografia-joao p strong,
+        #biografia-ana p strong,
+        #biografia-carlos p strong,
+        #biografia-lucia p strong {
+            color: #c5a47f;
+            font-weight: 600;
+        }
+
+        /* Ajuste para citações ou textos em itálico */
+        #biografia-paulo p em,
+        #biografia-maria p em,
+        #biografia-joao p em,
+        #biografia-ana p em,
+        #biografia-carlos p em,
+        #biografia-lucia p em {
+            color: #c5a47f;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Ajuste para espaçamento entre parágrafos */
+        #biografia-paulo p + p,
+        #biografia-maria p + p,
+        #biografia-joao p + p,
+        #biografia-ana p + p,
+        #biografia-carlos p + p,
+        #biografia-lucia p + p {
+            margin-top: 2rem;
+        }
+
+        /* Ajustes responsivos */
+        @media screen and (max-width: 768px) {
+            #biografia-paulo p,
+            #biografia-maria p,
+            #biografia-joao p,
+            #biografia-ana p,
+            #biografia-carlos p,
+            #biografia-lucia p {
+                font-size: 1.1rem;
+                line-height: 1.8;
+                padding: 25px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            #biografia-paulo p,
+            #biografia-maria p,
+            #biografia-joao p,
+            #biografia-ana p,
+            #biografia-carlos p,
+            #biografia-lucia p {
+                font-size: 1rem;
+                line-height: 1.6;
+                padding: 20px;
+            }
+        }
+
+        #biografia-paulo p:hover,
+        #biografia-maria p:hover,
+        #biografia-joao p:hover,
+        #biografia-ana p:hover,
+        #biografia-carlos p:hover,
+        #biografia-lucia p:hover {
+            transform: translateX(5px);
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.15);
+        }
+
+        /* Ajustes responsivos para as biografias */
+        @media (max-width: 768px) {
+
+            #biografia-paulo,
+            #biografia-maria,
+            #biografia-joao,
+            #biografia-ana,
+            #biografia-carlos,
+            #biografia-lucia {
+                padding: 30px;
+            }
+
+            #biografia-paulo h2,
+            #biografia-maria h2,
+            #biografia-joao h2,
+            #biografia-ana h2,
+            #biografia-carlos h2,
+            #biografia-lucia h2 {
+                font-size: 2.4rem;
+                margin-bottom: 25px;
+            }
+
+            #biografia-paulo p,
+            #biografia-maria p,
+            #biografia-joao p,
+            #biografia-ana p,
+            #biografia-carlos p,
+            #biografia-lucia p {
+                font-size: 1.1rem;
+                padding: 20px;
+                line-height: 1.7;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            #biografia-paulo,
+            #biografia-maria,
+            #biografia-joao,
+            #biografia-ana,
+            #biografia-carlos,
+            #biografia-lucia {
+                padding: 20px;
+            }
+
+            #biografia-paulo h2,
+            #biografia-maria h2,
+            #biografia-joao h2,
+            #biografia-ana h2,
+            #biografia-carlos h2,
+            #biografia-lucia h2 {
+                font-size: 2.2rem;
+                margin-bottom: 20px;
+            }
+
+            #biografia-paulo p,
+            #biografia-maria p,
+            #biografia-joao p,
+            #biografia-ana p,
+            #biografia-carlos p,
+            #biografia-lucia p {
+                font-size: 1rem;
+                padding: 15px;
+                line-height: 1.6;
+            }
+        }
+
+        /* Estilos específicos para Recordações */
+        #recordacoes-paulo,
+        #recordacoes-maria,
+        #recordacoes-joao,
+        #recordacoes-ana,
+        #recordacoes-carlos,
+        #recordacoes-lucia,
+        #depoimentos-paulo,
+        #depoimentos-maria,
+        #depoimentos-joao,
+        #depoimentos-ana,
+        #depoimentos-carlos,
+        #depoimentos-lucia {
+            background: rgba(45, 45, 45, 0.95);
+            padding: 60px; /* Increased from 40px */
+            border-radius: 15px;
+            margin: 0 auto;
+            max-width: 1600px; /* Increased from 1200px */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.1);
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        #depoimentos-paulo h2,
+        #depoimentos-maria h2,
+        #depoimentos-joao h2,
+        #depoimentos-ana h2,
+        #depoimentos-carlos h2,
+        #depoimentos-lucia h2 {
+            font-family: 'Great Vibes', cursive;
+            color: #c5a47f;
+            font-size: 2.8rem;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            position: relative;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(197, 164, 127, 0.4);
+        }
+
+        /* Ajuste de cards de depoimentos */
+        .depoimento-card {
+            background: rgba(37, 37, 37, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 25px auto;
+            border-left: 3px solid #c5a47f;
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(5px);
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.2),
+                0 0 20px rgba(197, 164, 127, 0.1);
+            overflow: hidden;
+        }
+
+        /* Efeito do ponto brilhoso */
+        .depoimento-card::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 1) 0%,
+                    rgba(197, 164, 127, 0.3) 50%,
+                    transparent 70%);
+            filter: blur(1px);
+            top: 0;
+            left: 0;
+            animation: movingLight 8s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes movingLight {
+            0% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 0;
+            }
+
+            25% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 100%;
+            }
+
+            50% {
+                transform: translate(-50%, -50%);
+                top: 100%;
+                left: 100%;
+            }
+
+            75% {
+                transform: translate(-50%, -50%);
+                top: 100%;
+                left: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 0;
+            }
+        }
+
+        /* Adicionar brilho na passagem do ponto */
+        .depoimento-card::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 0.2) 0%,
+                    rgba(197, 164, 127, 0.1) 50%,
+                    transparent 70%);
+            filter: blur(5px);
+            top: 0;
+            left: 0;
+            animation: movingGlow 8s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes movingGlow {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 0;
+                left: 0;
+                opacity: 1;
+            }
+
+            25% {
+                transform: translate(-50%, -50%) scale(1.2);
+                top: 0;
+                left: 100%;
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 100%;
+                left: 100%;
+                opacity: 1;
+            }
+
+            75% {
+                transform: translate(-50%, -50%) scale(1.2);
+                top: 100%;
+                left: 0;
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 0;
+                left: 0;
+                opacity: 1;
+            }
+        }
+
+        /* Ajuste do conteúdo para não interferir com o efeito */
+        .depoimento-card p,
+        .autor-depoimento {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Ajustes responsivos para o efeito */
+        @media screen and (max-width: 768px) {
+            .depoimento-card::after {
+                width: 8px;
+                height: 8px;
+            }
+
+            .depoimento-card::before {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .depoimento-card::after {
+                width: 6px;
+                height: 6px;
+            }
+
+            .depoimento-card::before {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .autor-depoimento {
+            text-align: right;
+            color: #c5a47f;
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            padding-right: 20px;
+        }
+
+        .depoimento-card:hover {
+            transform: translateX(10px);
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(197, 164, 127, 0.15);
+            border-left-width: 5px;
+        }
+
+        /* Ajustes responsivos para recordações e depoimentos */
+        @media screen and (max-width: 768px) {
+
+            #recordacoes-paulo,
+            #recordacoes-maria,
+            #recordacoes-joao,
+            #recordacoes-ana,
+            #recordacoes-carlos,
+            #recordacoes-lucia,
+            #depoimentos-paulo,
+            #depoimentos-maria,
+            #depoimentos-joao,
+            #depoimentos-ana,
+            #depoimentos-carlos,
+            #depoimentos-lucia {
+                padding: 25px;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .depoimento-card {
+                padding: 25px;
+                margin: 20px 0;
+            }
+
+            .depoimento-card p {
+                font-size: 1.1rem;
+            }
+
+            .autor-depoimento {
+                font-size: 1rem;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+
+            #recordacoes-paulo,
+            #recordacoes-maria,
+            #recordacoes-joao,
+            #recordacoes-ana,
+            #recordacoes-carlos,
+            #recordacoes-lucia,
+            #depoimentos-paulo,
+            #depoimentos-maria,
+            #depoimentos-joao,
+            #depoimentos-ana,
+            #depoimentos-carlos,
+            #depoimentos-lucia {
+                padding: 20px;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .depoimento-card {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            .depoimento-card p {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .autor-depoimento {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* MARCA ETERNIZEQRCODE */
+        .brand-footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #c5a47e88;
+            font-family: 'Georgia', serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* ANGEL STYLES */
+        .angel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        #angelContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background: transparent;
+        }
+
+        /* STAR STYLES */
+        .star-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background: transparent;
+        }
+
+        @keyframes celestialGlow {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+                text-shadow: 0 0 8px rgba(197, 164, 127, 0.3);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-5px);
+                text-shadow: 0 0 12px rgba(197, 164, 127, 0.4);
+            }
+        }
+
+        @keyframes etherealGlow {
+
+            0%,
+            100% {
+                text-shadow:
+                    1px 1px 2px rgba(0, 0, 0, 0.3),
+                    0 0 15px rgba(197, 164, 127, 0.3),
+                    0 0 30px rgba(197, 164, 127, 0.1);
+            }
+
+            50% {
+                text-shadow:
+                    1px 1px 2px rgba(0, 0, 0, 0.3),
+                    0 0 20px rgba(197, 164, 127, 0.4),
+                    0 0 40px rgba(197, 164, 127, 0.15);
+            }
+        }
+
+        /* Ajustes responsivos globais */
+        @media screen and (max-width: 1440px) {
+            .family-grid {
+                max-width: 1200px;
+                gap: 30px;
+                padding: 30px;
+            }
+
+            .family-member {
+                flex: 0 1 280px;
+            }
+        }
+
+        @media screen and (max-width: 1200px) {
+            .family-grid {
+                max-width: 1000px;
+                gap: 25px;
+                padding: 25px;
+            }
+
+            .family-member {
+                flex: 0 1 260px;
+                min-height: 380px;
+            }
+
+            .splash-title {
+                font-size: 3.2rem;
+            }
+
+            /* Ajustes para o memorial */
+            .cover-section {
+                padding-top: 35%;
+            }
+
+            .profile-photo {
+                width: 140px;
+                height: 140px;
+            }
+
+            .main-container {
+                margin: 20px auto;
+                width: 95%;
+            }
+        }
+
+        @media screen and (max-width: 992px) {
+            .family-grid {
+                max-width: 800px;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .family-member {
+                flex: 0 1 240px;
+                min-height: 360px;
+                padding: 25px;
+            }
+
+            .splash-title {
+                font-size: 3rem;
+            }
+
+            /* Ajustes para o memorial */
+            .cover-section {
+                padding-top: 40%;
+            }
+
+            .profile-photo {
+                width: 130px;
+                height: 130px;
+            }
+
+            .tab-buttons {
+                gap: 15px;
+            }
+
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 1.6rem;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .family-grid {
+                max-width: 600px;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .family-member {
+                flex: 0 1 calc(50% - 20px);
+                min-height: 340px;
+                padding: 20px;
+            }
+
+            .splash-title {
+                font-size: 2.8rem;
+            }
+
+            /* Ajustes para o memorial */
+            .cover-section {
+                padding-top: 45%;
+            }
+
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+                bottom: -50px;
+            }
+
+            .profile-dates {
+                font-size: 1.1rem;
+                padding: 8px 16px;
+            }
+
+            .tab-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .tab-btn {
+                font-size: 1.4rem;
+            }
+
+            #biografia-paulo,
+            #biografia-maria,
+            #biografia-joao,
+            #biografia-ana,
+            #biografia-carlos,
+            #biografia-lucia {
+                padding: 25px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .family-grid {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .family-member {
+                flex: 0 1 100%;
+                min-height: 320px;
+                margin: 10px;
+            }
+
+            .splash-title {
+                font-size: 2.5rem;
+            }
+
+            /* Ajustes para o memorial */
+            .cover-section {
+                padding-top: 50%;
+            }
+
+            .profile-photo {
+                width: 110px;
+                height: 110px;
+                bottom: -45px;
+            }
+
+            .profile-dates {
+                font-size: 1rem;
+                padding: 6px 12px;
+            }
+
+            .tab-btn {
+                font-size: 1.3rem;
+                padding: 8px 15px;
+            }
+
+            #biografia-paulo,
+            #biografia-maria,
+            #biografia-joao,
+            #biografia-ana,
+            #biografia-carlos,
+            #biografia-lucia {
+                padding: 20px;
+            }
+
+            #biografia-paulo p,
+            #biografia-maria p,
+            #biografia-joao p,
+            #biografia-ana p,
+            #biografia-carlos p,
+            #biografia-lucia p {
+                font-size: 1rem;
+                padding: 15px;
+            }
+        }
+
+        /* Ajustes para dispositivos muito pequenos */
+        @media screen and (max-width: 360px) {
+            .splash-title {
+                font-size: 2.2rem;
+            }
+
+            .family-member {
+                min-height: 300px;
+            }
+
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+                bottom: -40px;
+            }
+
+            .tab-btn {
+                font-size: 1.2rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Ajustes para tablets em modo paisagem */
+        @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .family-grid {
+                max-width: 900px;
+            }
+
+            .family-member {
+                flex: 0 1 calc(33.33% - 20px);
+            }
+
+            .cover-section {
+                padding-top: 30%;
+            }
+        }
+
+        /* Ajustes para dispositivos com tela alta */
+        @media screen and (min-height: 1000px) {
+            .family-member {
+                min-height: 420px;
+            }
+
+            .cover-section {
+                padding-top: 35%;
+            }
+        }
+
+        /* Ajustes para dispositivos com tela muito alta */
+        @media screen and (min-height: 1200px) {
+            .family-member {
+                min-height: 460px;
+            }
+        }
+
+        /* Ajustes para dispositivos com tela pequena em altura */
+        @media screen and (max-height: 600px) {
+            .family-member {
+                min-height: 280px;
+            }
+
+            .cover-section {
+                padding-top: 25%;
+            }
+
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+                bottom: -40px;
+            }
+        }
+
+        /* Ajustes para orientação paisagem em dispositivos móveis */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .family-grid {
+                padding: 10px;
+            }
+
+            .family-member {
+                min-height: 260px;
+            }
+
+            .cover-section {
+                padding-top: 20%;
+            }
+
+            .tab-content-container {
+                max-height: calc(100vh - 200px);
+            }
+        }
+
+        /* Estilo unificado para todas as tabs */
+        .tab-content {
+            width: 100%;
+            max-width: 1600px; /* Increased from 1200px */
+            margin: 0 auto;
+            padding: 40px; /* Increased from 30px */
+        }
+
+        #recordacoes-paulo h2,
+        #recordacoes-maria h2,
+        #recordacoes-joao h2,
+        #recordacoes-ana h2,
+        #recordacoes-carlos h2,
+        #recordacoes-lucia h2,
+        #depoimentos-paulo h2,
+        #depoimentos-maria h2,
+        #depoimentos-joao h2,
+        #depoimentos-ana h2,
+        #depoimentos-carlos h2,
+        #depoimentos-lucia h2 {
+            font-family: 'Great Vibes', cursive;
+            color: #c5a47f;
+            font-size: 2rem;
+            /* Reduzido de 2.8rem */
+            text-align: center;
+            margin-top: 10px;
+            /* Reduzido de 20px */
+            margin-bottom: 25px;
+            /* Reduzido de 35px */
+            padding-bottom: 10px;
+            /* Reduzido de 15px */
+            position: relative;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(197, 164, 127, 0.4);
+            white-space: nowrap;
+            /* Evita quebra de linha no título */
+        }
+
+        /* Ajuste do layout dos botões */
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0 20px;
+            padding: 10px 0;
+            position: relative;
+            z-index: 5;
+            flex-wrap: nowrap;
+            /* Evita quebra de linha nos botões */
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #c5a47f;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.6rem;
+            /* Reduzido de 1.8rem */
+            white-space: nowrap;
+        }
+
+        /* Ajustes responsivos */
+        @media screen and (max-width: 768px) {
+
+            #recordacoes-paulo h2,
+            #recordacoes-maria h2,
+            #recordacoes-joao h2,
+            #recordacoes-ana h2,
+            #recordacoes-carlos h2,
+            #recordacoes-lucia h2,
+            #depoimentos-paulo h2,
+            #depoimentos-maria h2,
+            #depoimentos-joao h2,
+            #depoimentos-ana h2,
+            #depoimentos-carlos h2,
+            #depoimentos-lucia h2 {
+                font-size: 1.8rem;
+            }
+
+            .tab-btn {
+                font-size: 1.4rem;
+                padding: 8px 15px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+
+            #recordacoes-paulo h2,
+            #recordacoes-maria h2,
+            #recordacoes-joao h2,
+            #recordacoes-ana h2,
+            #recordacoes-carlos h2,
+            #recordacoes-lucia h2,
+            #depoimentos-paulo h2,
+            #depoimentos-maria h2,
+            #depoimentos-joao h2,
+            #depoimentos-ana h2,
+            #depoimentos-carlos h2,
+            #depoimentos-lucia h2 {
+                font-size: 1.6rem;
+            }
+
+            .tab-btn {
+                font-size: 1.2rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Estilos do Modal de Imagem */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Efeito do ponto brilhoso no modal */
+        .modal-content::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 1) 0%,
+                    rgba(197, 164, 127, 0.3) 50%,
+                    transparent 70%);
+            filter: blur(1px);
+            top: 0;
+            left: 0;
+            animation: movingLightModal 8s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: radial-gradient(circle at center,
+                    rgba(197, 164, 127, 0.2) 0%,
+                    rgba(197, 164, 127, 0.1) 50%,
+                    transparent 70%);
+            filter: blur(5px);
+            top: 0;
+            left: 0;
+            animation: movingGlowModal 8s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes movingLightModal {
+            0% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 0;
+            }
+
+            25% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 100%;
+            }
+
+            50% {
+                transform: translate(-50%, -50%);
+                top: 100%;
+                left: 100%;
+            }
+
+            75% {
+                transform: translate(-50%, -50%);
+                top: 100%;
+                left: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%);
+                top: 0;
+                left: 0;
+            }
+        }
+
+        @keyframes movingGlowModal {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 0;
+                left: 0;
+                opacity: 1;
+            }
+
+            25% {
+                transform: translate(-50%, -50%) scale(1.2);
+                top: 0;
+                left: 100%;
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 100%;
+                left: 100%;
+                opacity: 1;
+            }
+
+            75% {
+                transform: translate(-50%, -50%) scale(1.2);
+                top: 100%;
+                left: 0;
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                top: 0;
+                left: 0;
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #c5a47f;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+        }
+
+        .close-modal:hover {
+            color: #fff;
+            background: rgba(197, 164, 127, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Ajustes responsivos para o modal */
+        @media screen and (max-width: 768px) {
+            .modal-content {
+                max-width: 95%;
+            }
+
+            .modal-content::after {
+                width: 10px;
+                height: 10px;
+            }
+
+            .modal-content::before {
+                width: 30px;
+                height: 30px;
+            }
+
+            .close-modal {
+                top: 10px;
+                right: 10px;
+                font-size: 24px;
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .modal-content {
+                max-width: 98%;
+            }
+
+            .modal-content::after {
+                width: 8px;
+                height: 8px;
+            }
+
+            .modal-content::before {
+                width: 24px;
+                height: 24px;
+            }
+
+            .close-modal {
+                top: 5px;
+                right: 5px;
+                font-size: 20px;
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        #recordacoes-paulo,
+        #recordacoes-maria,
+        #recordacoes-joao,
+        #recordacoes-ana,
+        #recordacoes-carlos,
+        #recordacoes-lucia,
+        #depoimentos-paulo,
+        #depoimentos-maria,
+        #depoimentos-joao,
+        #depoimentos-ana,
+        #depoimentos-carlos,
+        #depoimentos-lucia {
+            display: none;
+        }
+
+        #recordacoes-paulo.active,
+        #recordacoes-maria.active,
+        #recordacoes-joao.active,
+        #recordacoes-ana.active,
+        #recordacoes-carlos.active,
+        #recordacoes-lucia.active,
+        #depoimentos-paulo.active,
+        #depoimentos-maria.active,
+        #depoimentos-joao.active,
+        #depoimentos-ana.active,
+        #depoimentos-carlos.active,
+        #depoimentos-lucia.active {
+            display: block;
+        }
+
+        /* Ajuste específico para grids de imagens */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px; /* Increased from 20px */
+            padding: 30px; /* Increased from 20px */
+            width: 100%;
+            max-width: 1600px; /* Increased from 1200px */
+            margin: 0 auto 30px; /* Increased bottom margin */
+        }
+
+        .memory-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+        }
+
+        .memory-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+
+        .memory-item:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(197, 164, 127, 0.2);
+        }
+
+        .memory-item:hover img {
+            transform: scale(1.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .memory-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 15px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .memory-grid {
+                grid-template-columns: repeat(1, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+        }
+
+        #videoIntroOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #threejsContainer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        #videoWrapper {
+            position: relative;
+            width: 300px;  /* Largura do vídeo estilo Reels */
+            height: 533px; /* Altura proporcional 9:16 */
+            z-index: 3;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            margin-bottom: -50px; /* Ajuste para baixo */
+        }
+
+        #introVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+            display: none;
+        }
+
+        .glow-button {
+            position: absolute;
+            z-index: 4; /* Aumentado para ficar acima do efeito 3D */
+            bottom: 30px;
+            background: rgba(197, 164, 127, 0.3);
+            border: 2px solid #c5a47f;
+            color: #c5a47f;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            animation: pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(197,164,127,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(197,164,127,0.5); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(197,164,127,0.3); }
+        }
+
+        @media (max-width: 600px) {
+            #videoWrapper {
+                width: 90%;
+                height: 85vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="starCanvas"></canvas>
+    <!-- Tela Inicial -->
+    <div class="splash-container" id="splashScreen">
+        <div class="chapel-header">
+            <div class="chapel-arch">
+                <div class="chapel-cross">
+                    <i class="fas fa-cross"></i>
+                </div>
+                <h1 class="splash-title">Família Mazza</h1>
+            </div>
+        </div>
+        <div class="family-grid">
+            <div class="family-member level-3" onclick="showMemorial('paulo')">
+                <div class="member-content">
+                    <img src="Fotos/perfil.jpg" alt="Paulo Mazza">
+                    <span class="member-name">Paulo Mazza</span>
+                    <span class="member-dates">19/03/1945 - 10/11/2022</span>
+                </div>
+            </div>
+        </div>
+        <div class="brand-footer">ONStarsQrCode</div>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="back-button" id="backButton" onclick="showSplash()">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+
+    <!-- Memorial -->
+    <div class="memorial-container" id="memorialContainer">
+        <!-- Memorial de Paulo -->
+        <div class="memorial-content" id="paulo" style="display: none;">
+            <!-- BLOCO 1: Foto de capa e perfil -->
+            <div class="cover-block">
+                <div class="cover-section">
+                    <div id="coverStarsContainer"></div>
+                    <img src="Fotos/capa16.jpg" alt="Capa" class="cover-image">
+                    <img src="Fotos/perfil.jpg" alt="Perfil" class="profile-photo">
+                </div>
+            </div>
+
+            <!-- BLOCO 2: Data de morte -->
+            <div class="dates-block">
+                <div class="profile-dates">
+                    <span class="cross"><i class="fas fa-cross"></i></span>
+                    19/03/1945 &nbsp;–&nbsp; 24/02/2016
+                    <span class="cross"><i class="fas fa-cross"></i></span>
+                </div>
+            </div>
+
+            <!-- BLOCO 3: Conteúdo principal -->
+            <div class="content-block">
+                <div class="main-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="openTab(event, 'biografia-paulo')">Biografia</button>
+                        <button class="tab-btn" onclick="openTab(event, 'recordacoes-paulo')">Recordações</button>
+                        <button class="tab-btn" onclick="openTab(event, 'depoimentos-paulo')">Depoimentos</button>
+                    </div>
+                    <div class="tab-content-container">
+                        <div id="biografia-paulo" class="tab-content">
+                            <h2>Sua História</h2>
+                            <p>**Paulo Augusto Romeiro Mazza** (19 de março de 1945 – 24 de fevereiro de 2016) foi um
+                                homem de múltiplos talentos, deixando um legado marcante em suas áreas de atuação e na
+                                vida daqueles que o cercaram. Nascido em 1945, dedicou parte de sua vida à carreira
+                                militar, alcançando a patente de **Tenente-Coronel da Aeronáutica**, onde demonstrou
+                                disciplina, liderança e comprometimento com a pátria. Sua passagem pela Força Aérea foi
+                                não apenas uma profissão, mas uma missão que refletiu seu profundo senso de dever.
+
+                                Após encerrar sua carreira militar, Paulo Augusto empreendeu uma nova jornada ao fundar
+                                uma **rede de assessoria advocatícia**, onde aplicou sua expertise em estratégia e
+                                organização, ajudando clientes a resolver questões complexas com eficiência. Sua
+                                transição para o mundo jurídico destacou sua versatilidade e capacidade de reinventar-se
+                                profissionalmente.
+
+                                Além de suas conquistas militares e empresariais, Paulo Augusto tinha uma paixão
+                                vibrante pela cultura brasileira. Como compositor de **enredos carnavalescos**,
+                                contribuiu para os carnavais de **São José dos Campos** e **Guaratinguetá**, cidades
+                                onde seu talento artístico ganhou destaque. Em 2010, seu envolvimento com o samba e sua
+                                dedicação à cultura popular lhe renderam o título de **Rei do Samba de São José dos
+                                Campos**, uma honra que celebrou sua capacidade de unir tradição e criatividade.
+
+                                Como família, deixou um legado de amor e inspiração. Foi pai de **Paulo Junior, Adriana,
+                                Auryana, Alexandra e Ariadne**, aos quais transmitiu valores de perseverança, respeito à
+                                cultura e compromisso com a excelência. Sua presença como líder, artista e pai foi
+                                marcada pela generosidade e pela capacidade de incentivar sonhos.
+
+                                Paulo Augusto Romeiro Mazza faleceu em 24 de fevereiro de 2016, deixando não apenas
+                                saudades, mas uma história de vida que continua a inspirar. Sua trajetória, entre a
+                                rigidez militar, a astúcia do Direito e a alegria do samba, simboliza a riqueza de uma
+                                existência dedicada a servir, criar e amar.
+
+                                *"Um coronel das alturas, um poeta do asfalto, um rei do samba e, acima de tudo, um
+                                eterno exemplo de dedicação."*</p>
+                        </div>
+                        <div id="recordacoes-paulo" class="tab-content">
+                            <h2>Momentos Especiais</h2>
+                            <div class="memory-grid">
+                                <div class="memory-item">
+                                    <img src="Fotos/ft1 (1).jpg" alt="Memória 1"
+                                        onclick="openModal('Fotos/ft1 (1).jpg')">
+                                </div>
+                            </div>
+                            <div class="memory-grid">
+                                <div class="memory-item">
+                                    <img src="Fotos/ft1 (2).jpg" alt="Memória 1"
+                                        onclick="openModal('Fotos/ft1 (2).jpg')">
+                                </div>
+                            </div>
+                            <div class="memory-grid">
+                                <div class="memory-item">
+                                    <img src="Fotos/ft1 (3).jpg" alt="Memória 1"
+                                        onclick="openModal('Fotos/ft1 (3).jpg')">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="depoimentos-paulo" class="tab-content">
+                            <h2>Palavras de Quem Ama</h2>
+                            <div class="depoimento-card">
+                                <p>"Sua sabedoria sempre guiou nossa família."</p>
+                                <div class="autor-depoimento">- Allan Mazza (Neto)</div>
+                            </div>
+                            <div class="depoimento-card">
+                                <p>"Sempre Incentivou a familia a ser feliz."</p>
+                                <div class="autor-depoimento">- Alexandra (Filha)</div>
+                            </div>
+                            <div class="depoimento-card">
+                                <p>"Meu pai era o melhor pai do mundo."</p>
+                                <div class="autor-depoimento">- Ariadne (Filha)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Imagem -->
+    <div class="modal" id="imageModal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="expandedImage">
+    </div>
+
+    <!-- Video Intro Overlay -->
+    <div id="videoIntroOverlay">
+        <div id="threejsContainer"></div>
+        <div id="videoWrapper">
+            <video id="introVideo" muted playsinline>
+                <source src="videos/IA1.0.mp4" type="video/mp4">
+            </video>
+        </div>
+        <button id="playButton" class="glow-button">
+            <i class="fas fa-play"></i>
+        </button>
+    </div>
+
+    <script>
+        // Efeito de luzes na lápide
+        function initArchLights() {
+            const arch = document.querySelector('.chapel-arch');
+            if (!arch) return;
+
+            // Remove any existing lights first
+            const existingLights = arch.querySelectorAll('.arch-light');
+            existingLights.forEach(light => light.remove());
+
+            // Criar os pontos de luz
+            const lights = [];
+            for (let i = 0; i < 2; i++) {
+                const light = document.createElement('div');
+                light.className = 'arch-light';
+                light.style.cssText = `
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background: radial-gradient(circle at center, rgba(197, 164, 127, 0.9), rgba(197, 164, 127, 0.1) 70%);
+                    border-radius: 50%;
+                    filter: blur(2px);
+                    pointer-events: none;
+                    z-index: 2;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                arch.appendChild(light);
+                lights.push({
+                    element: light,
+                    progress: i * Math.PI
+                });
+
+                // Fade in the light after a short delay
+                setTimeout(() => {
+                    light.style.opacity = '1';
+                }, i * 100);
+            }
+
+            // Função para calcular a posição na curva do arco
+            function getArchPosition(progress) {
+                const width = arch.offsetWidth;
+                const height = arch.offsetHeight;
+                const radius = width / 2;
+
+                // Limitar o movimento ao arco superior
+                const angle = Math.PI + progress;
+                const x = radius * Math.cos(angle) + radius;
+                const y = radius * Math.sin(angle) * 0.6; // Achatamento vertical
+
+                return { x, y };
+            }
+
+            // Animação
+            function animateArchLights() {
+                lights.forEach((light, index) => {
+                    light.progress += 0.01;
+                    const pos = getArchPosition(light.progress);
+                    
+                    light.element.style.left = `${pos.x}px`;
+                    light.element.style.top = `${pos.y}px`;
+                    
+                    // Ajustar opacidade baseado na posição
+                    const opacity = Math.sin(light.progress) * 0.5 + 0.5;
+                    light.element.style.opacity = opacity;
+                    
+                    // Reset quando completar o ciclo
+                    if (light.progress > 3 * Math.PI) {
+                        light.progress = Math.PI;
+                    }
+                });
+
+                // Continue animation only if the arch is still in the document
+                if (document.contains(arch)) {
+                    requestAnimationFrame(animateArchLights);
+                }
+            }
+
+            // Iniciar animação
+            requestAnimationFrame(animateArchLights);
+        }
+
+        // Efeito de estrelas na capa
+        let coverScene, coverCamera, coverRenderer, coverStars;
+        
+        function initCoverStars() {
+            const container = document.getElementById('coverStarsContainer');
+            if (!container) return;
+
+            // Setup básico Three.js
+            coverScene = new THREE.Scene();
+            coverCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            coverRenderer = new THREE.WebGLRenderer({ alpha: true });
+            coverRenderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(coverRenderer.domElement);
+
+            // Criar estrelas
+            const starsGeometry = new THREE.BufferGeometry();
+            const starCount = 1000;
+            const positions = new Float32Array(starCount * 3);
+            const velocities = new Float32Array(starCount * 3);
+            const colors = new Float32Array(starCount * 3);
+
+            for(let i = 0; i < starCount; i++) {
+                const i3 = i * 3;
+                // Posição
+                positions[i3] = (Math.random() - 0.5) * 100;
+                positions[i3 + 1] = (Math.random() - 0.5) * 100;
+                positions[i3 + 2] = (Math.random() - 0.5) * 50;
+                
+                // Velocidade
+                velocities[i3] = (Math.random() - 0.5) * 0.05;
+                velocities[i3 + 1] = (Math.random() - 0.5) * 0.05;
+                velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
+
+                // Cor (dourada com variação)
+                const golden = new THREE.Color(0xc5a47f);
+                colors[i3] = golden.r + (Math.random() * 0.2 - 0.1);
+                colors[i3 + 1] = golden.g + (Math.random() * 0.2 - 0.1);
+                colors[i3 + 2] = golden.b + (Math.random() * 0.2 - 0.1);
+            }
+
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const starsMaterial = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            coverStars = new THREE.Points(starsGeometry, starsMaterial);
+            coverScene.add(coverStars);
+
+            coverCamera.position.z = 50;
+
+            // Interatividade com mouse
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (event) => {
+                const rect = container.getBoundingClientRect();
+                if (event.clientX >= rect.left && event.clientX <= rect.right &&
+                    event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                    mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                }
+            });
+
+            // Função de animação
+            function animateCoverStars() {
+                requestAnimationFrame(animateCoverStars);
+
+                const positions = coverStars.geometry.attributes.position.array;
+                const time = Date.now() * 0.0001;
+
+                for(let i = 0; i < positions.length; i += 3) {
+                    // Movimento base
+                    positions[i] += velocities[i];
+                    positions[i + 1] += velocities[i + 1];
+                    positions[i + 2] += velocities[i + 2];
+
+                    // Influência do mouse
+                    positions[i] += mouseX * 0.1;
+                    positions[i + 1] += mouseY * 0.1;
+
+                    // Reset de posição quando sair da área visível
+                    if (Math.abs(positions[i]) > 50) positions[i] *= -0.95;
+                    if (Math.abs(positions[i + 1]) > 50) positions[i + 1] *= -0.95;
+                    if (Math.abs(positions[i + 2]) > 25) positions[i + 2] *= -0.95;
+                }
+
+                coverStars.geometry.attributes.position.needsUpdate = true;
+                coverStars.rotation.y = time * 0.1;
+
+                coverRenderer.render(coverScene, coverCamera);
+            }
+
+            animateCoverStars();
+
+            // Ajuste de tamanho
+            window.addEventListener('resize', () => {
+                if (container) {
+                    coverCamera.aspect = container.offsetWidth / container.offsetHeight;
+                    coverCamera.updateProjectionMatrix();
+                    coverRenderer.setSize(container.offsetWidth, container.offsetHeight);
+                }
+            });
+        }
+
+        function openTab(evt, tabId) {
+            // Encontra o memorial atual
+            const memorial = evt.currentTarget.closest('.memorial-content');
+            if (!memorial) return;
+
+            // Esconde todas as tabs deste memorial específico
+            memorial.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Remove active de todos os botões deste memorial específico
+            memorial.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostra a tab selecionada
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                evt.currentTarget.classList.add('active');
+            }
+        }
+
+        // Set initial active tab
+        document.addEventListener("DOMContentLoaded", function () {
+            const memorials = document.getElementsByClassName("memorial-content");
+            for (let memorial of memorials) {
+                const firstTab = memorial.querySelector('.tab-btn');
+                if (firstTab) {
+                    firstTab.click();
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function showMemorial(member) {
+            // Esconde a tela inicial e exibe o memorial
+            document.getElementById('splashScreen').style.display = 'none';
+            document.getElementById('memorialContainer').style.display = 'block';
+
+            // Configura o botão de voltar
+            const backButton = document.getElementById('backButton');
+            backButton.style.display = 'flex'; // Usa flex para centralizar o ícone
+
+            // Esconde todos os memoriais
+            document.querySelectorAll('.memorial-content').forEach(content => content.style.display = 'none');
+
+            // Mostra o memorial selecionado
+            const selectedMemorial = document.getElementById(member);
+            selectedMemorial.style.display = 'block';
+
+            // Cleanup any existing Three.js instances
+            const existingCanvas = document.getElementById('coverStarsContainer').querySelector('canvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+            }
+            if (coverRenderer) {
+                coverRenderer.dispose();
+            }
+            if (coverScene) {
+                while(coverScene.children.length > 0) {
+                    const object = coverScene.children[0];
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) object.material.dispose();
+                    coverScene.remove(object);
+                }
+            }
+
+            // Inicializa o efeito de estrelas na capa com um pequeno delay
+            setTimeout(() => {
+                initCoverStars();
+            }, 100);
+
+            // Ativa a aba de Biografia por padrão
+            selectedMemorial.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            selectedMemorial.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            selectedMemorial.querySelector('.tab-content').classList.add('active');
+            selectedMemorial.querySelector('.tab-btn').classList.add('active');
+        }
+
+        function showSplash() {
+            document.getElementById('splashScreen').style.display = 'block';
+            document.getElementById('memorialContainer').style.display = 'none';
+            document.getElementById('backButton').style.display = 'none'; // Garante que o botão fique oculto
+            
+            // Cleanup cover stars
+            const existingCanvas = document.getElementById('coverStarsContainer').querySelector('canvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+            }
+            if (coverRenderer) {
+                coverRenderer.dispose();
+            }
+            if (coverScene) {
+                while(coverScene.children.length > 0) {
+                    const object = coverScene.children[0];
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) object.material.dispose();
+                    coverScene.remove(object);
+                }
+            }
+
+            // Reinicializa as luzes da lápide com um delay maior para garantir que o DOM esteja pronto
+            setTimeout(initArchLights, 200);
+        }
+
+        // Removida a segunda definição da função openTab para evitar conflitos
+
+        // Detect which section is visible and update buttons
+        document.querySelectorAll('.tab-content-container').forEach(container => {
+            container.addEventListener('scroll', () => {
+                const containerRect = container.getBoundingClientRect();
+                const tabs = container.querySelectorAll('.tab-content');
+                const buttons = container.closest('.main-container').querySelectorAll('.tab-btn');
+
+                tabs.forEach((tab, index) => {
+                    const tabRect = tab.getBoundingClientRect();
+                    const tabCenter = tabRect.left + tabRect.width / 2;
+                    const containerCenter = containerRect.left + containerRect.width / 2;
+
+                    if (Math.abs(tabCenter - containerCenter) < tabRect.width / 3) {
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        buttons[index].classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Modal de imagem
+        function openModal(src) {
+            document.getElementById('imageModal').style.display = 'flex';
+            document.getElementById('expandedImage').src = src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora da imagem
+        window.onclick = function (event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+    <script>
+        // Configuração Three.js para efeito nas áreas laterais
+        let scene, camera, renderer, particles;
+        const videoAspect = 9/16; // Proporção do Reels
+
+        let meteorVelocities;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('threejsContainer').appendChild(renderer.domElement);
+
+            // Configuração do campo estelar
+            const createStarField = (count, radius, color) => {
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(count * 3);
+                const colors = new Float32Array(count * 3);
+                const colorObj = new THREE.Color(color);
+
+                for(let i = 0; i < count; i++) {
+                    const i3 = i * 3;
+                    
+                    // Posicionamento nas bordas (topo 20% e laterais 30%)
+                    const edge = Math.random();
+                    if(edge < 0.6) { // Laterais
+                        positions[i3] = (Math.random() > 0.5 ? 1 : -1) * (0.7 + Math.random() * 0.3) * radius;
+                        positions[i3 + 1] = (Math.random() - 0.5) * radius * 0.8;
+                    } else { // Topo
+                        positions[i3] = (Math.random() - 0.5) * radius * 0.8;
+                        positions[i3 + 1] = 0.7 + Math.random() * 0.3 * radius;
+                    }
+                    
+                    positions[i3 + 2] = -Math.random() * radius;
+
+                    // Variação de cor
+                    colors[i3] = colorObj.r + (Math.random() * 0.2 - 0.1);
+                    colors[i3 + 1] = colorObj.g + (Math.random() * 0.2 - 0.1);
+                    colors[i3 + 2] = colorObj.b + (Math.random() * 0.2 - 0.1);
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                return new THREE.Points(
+                    geometry,
+                    new THREE.PointsMaterial({
+                        size: 0.25,
+                        vertexColors: true,
+                        transparent: true,
+                        opacity: 0.8,
+                        sizeAttenuation: true,
+                        blending: THREE.AdditiveBlending
+                    })
+                );
+            };
+
+            // Camadas de estrelas
+            const starLayers = [
+                { count: 800, radius: 150, color: 0xc5a47f }, // Camada dourada próxima
+                { count: 500, radius: 100, color: 0x89a2d8 }, // Camada azul distante
+                { count: 300, radius: 150, color: 0xffffff }  // Estrelas brancas de fundo
+            ];
+
+            starLayers.forEach(layer => {
+                const stars = createStarField(layer.count, layer.radius, layer.color);
+                scene.add(stars);
+            });
+
+            // Chuva de meteoros
+            const meteorGeometry = new THREE.BufferGeometry();
+            const meteorCount = 20;
+            const meteorPositions = new Float32Array(meteorCount * 3);
+            meteorVelocities = new Float32Array(meteorCount * 3);
+
+            for(let i = 0; i < meteorCount; i++) {
+                const i3 = i * 3;
+                meteorPositions[i3] = (Math.random() - 0.5) * 60; // Posição X inicial
+                meteorPositions[i3 + 1] = 30 + Math.random() * 20; // Posição Y inicial
+                meteorPositions[i3 + 2] = -Math.random() * 50; // Profundidade Z
+                
+                meteorVelocities[i3] = (Math.random() - 0.5) * 0.1; // Velocidade X
+                meteorVelocities[i3 + 1] = -(0.5 + Math.random() * 0.5); // Velocidade Y
+                meteorVelocities[i3 + 2] = 0; // Velocidade Z
+            }
+
+            meteorGeometry.setAttribute('position', new THREE.BufferAttribute(meteorPositions, 3));
+            
+            const meteors = new THREE.Points(
+                meteorGeometry,
+                new THREE.PointsMaterial({
+                    size: 1.5,
+                    color: 0xff9933,
+                    transparent: true,
+                    opacity: 0.7,
+                    sizeAttenuation: true,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            scene.add(meteors);
+
+            // Nebulosa sutil nas bordas
+            const nebulaGeometry = new THREE.PlaneGeometry(200, 200);
+            const nebulaMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec2 resolution;
+                    varying vec2 vUv;
+                    
+                    void main() {
+                        vec2 uv = (vUv - 0.5) * 2.0;
+                        float mask = smoothstep(0.7, 1.2, length(uv));
+                        
+                        vec3 color = vec3(0.0);
+                        for(float i = 0.0; i < 3.0; i++) {
+                            vec2 offset = vec2(
+                                sin(time * 0.3 + i * 2.0) * 0.2,
+                                cos(time * 0.2 + i * 1.5) * 0.2
+                            );
+                            color += 0.3 * vec3(
+                                0.7 + 0.3 * sin(uv.x * 10.0 + time + i),
+                                0.5 + 0.2 * cos(uv.y * 8.0 + time + i),
+                                0.9 + 0.1 * sin(time * 0.5)
+                            ) * (1.0 - mask);
+                        }
+                        
+                        gl_FragColor = vec4(color * 0.4, 1.0);
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+            nebula.position.z = -100;
+            nebula.material.opacity = 0; // Começa invisível
+            scene.add(nebula);
+
+            // Luzes da borda do vídeo
+            const borderLightsGeometry = new THREE.BufferGeometry();
+            const borderLightsCount = 20;
+            const borderLightsPositions = new Float32Array(borderLightsCount * 3);
+            const borderLightsProgress = new Float32Array(borderLightsCount);
+            
+            // Calcula as dimensões do retângulo baseado no tamanho do vídeo
+            const videoWidth = 15; // Ajuste conforme necessário
+            const videoHeight = videoWidth * (16/9);
+            const borderPadding = 0.5; // Espaço extra ao redor do vídeo
+            
+            for(let i = 0; i < borderLightsCount; i++) {
+                borderLightsProgress[i] = (i / borderLightsCount) * 4; // 4 lados
+                const progress = borderLightsProgress[i];
+                const i3 = i * 3;
+                
+                // Posiciona as luzes ao longo do retângulo
+                if(progress < 1) { // Lado superior
+                    borderLightsPositions[i3] = -videoWidth/2 + progress * videoWidth;
+                    borderLightsPositions[i3 + 1] = videoHeight/2 + borderPadding;
+                } else if(progress < 2) { // Lado direito
+                    borderLightsPositions[i3] = videoWidth/2 + borderPadding;
+                    borderLightsPositions[i3 + 1] = videoHeight/2 - (progress-1) * videoHeight;
+                } else if(progress < 3) { // Lado inferior
+                    borderLightsPositions[i3] = videoWidth/2 - (progress-2) * videoWidth;
+                    borderLightsPositions[i3 + 1] = -videoHeight/2 - borderPadding;
+                } else { // Lado esquerdo
+                    borderLightsPositions[i3] = -videoWidth/2 - borderPadding;
+                    borderLightsPositions[i3 + 1] = -videoHeight/2 + (progress-3) * videoHeight;
+                }
+                borderLightsPositions[i3 + 2] = 0;
+            }
+            
+            borderLightsGeometry.setAttribute('position', new THREE.BufferAttribute(borderLightsPositions, 3));
+            
+            const borderLights = new THREE.Points(
+                borderLightsGeometry,
+                new THREE.PointsMaterial({
+                    size: 1.0,
+                    color: 0xc5a47f,
+                    transparent: true,
+                    opacity: 0.8,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            borderLights.visible = false; // Começa invisível
+            scene.add(borderLights);
+
+            camera.position.set(0, 0, 50);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = performance.now() * 0.001;
+            
+            // Animar estrelas
+            scene.children.forEach((obj, index) => {
+                if(index < 3) { // Camadas de estrelas
+                    obj.rotation.y += 0.0001 * (index + 1);
+                    obj.rotation.x += 0.00005 * (index + 1);
+                }
+            });
+
+            // Animar meteoros
+            const meteors = scene.children[3];
+            const positions = meteors.geometry.attributes.position.array;
+            const velocities = meteorVelocities;
+            
+            for(let i = 0; i < positions.length; i += 3) {
+                positions[i] += velocities[i];
+                positions[i + 1] += velocities[i + 1];
+                positions[i + 2] += velocities[i + 2];
+                
+                // Resetar posição quando sair da tela
+                if(positions[i + 1] < -30 || Math.abs(positions[i]) > 45) {
+                    positions[i] = (Math.random() - 0.5) * 60;
+                    positions[i + 1] = 30 + Math.random() * 20;
+                    positions[i + 2] = -Math.random() * 50;
+                }
+            }
+            meteors.geometry.attributes.position.needsUpdate = true;
+
+            // Animar nebulosa
+            const nebula = scene.children[4];
+            nebula.material.uniforms.time.value = time;
+
+            // Animar luzes da borda
+            const borderLights = scene.children[5];
+            if (borderLights && borderLights.visible) {
+                const positions = borderLights.geometry.attributes.position.array;
+                for(let i = 0; i < borderLightsCount; i++) {
+                    borderLightsProgress[i] = (borderLightsProgress[i] + 0.01) % 4;
+                    const progress = borderLightsProgress[i];
+                    const i3 = i * 3;
+                    
+                    if(progress < 1) { // Lado superior
+                        positions[i3] = -videoWidth/2 + progress * videoWidth;
+                        positions[i3 + 1] = videoHeight/2 + borderPadding;
+                    } else if(progress < 2) { // Lado direito
+                        positions[i3] = videoWidth/2 + borderPadding;
+                        positions[i3 + 1] = videoHeight/2 - (progress-1) * videoHeight;
+                    } else if(progress < 3) { // Lado inferior
+                        positions[i3] = videoWidth/2 - (progress-2) * videoWidth;
+                        positions[i3 + 1] = -videoHeight/2 - borderPadding;
+                    } else { // Lado esquerdo
+                        positions[i3] = -videoWidth/2 - borderPadding;
+                        positions[i3 + 1] = -videoHeight/2 + (progress-3) * videoHeight;
+                    }
+                }
+                borderLights.geometry.attributes.position.needsUpdate = true;
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // Controle de vídeo
+        const video = document.getElementById('introVideo');
+        const playButton = document.getElementById('playButton');
+        const overlay = document.getElementById('videoIntroOverlay');
+
+        function handleVideoEnd() {
+            // Esconder as luzes da borda
+            const borderLights = scene.children[5];
+            if (borderLights) {
+                borderLights.visible = false;
+            }
+            
+            overlay.style.opacity = 0;
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                showSplash();
+            }, 1000);
+        }
+
+        function tryAutoplay() {
+            video.play().then(() => {
+                video.style.display = 'block';
+                playButton.style.display = 'none';
+                // Fade in da nebulosa
+                const nebula = scene.children[4];
+                if (nebula && nebula.material) {
+                    nebula.material.opacity = 0;
+                    const fadeIn = () => {
+                        if (nebula.material.opacity < 1) {
+                            nebula.material.opacity += 0.05;
+                            requestAnimationFrame(fadeIn);
+                        }
+                    };
+                    fadeIn();
+                }
+            }).catch(() => {
+                playButton.style.display = 'block';
+            });
+        }
+
+        playButton.addEventListener('click', () => {
+            video.play();
+            playButton.style.display = 'none';
+            video.style.display = 'block';
+            // Fade in da nebulosa e ativar luzes da borda
+            const nebula = scene.children[4];
+            const borderLights = scene.children[5];
+            if (nebula && nebula.material) {
+                nebula.material.opacity = 0;
+                const fadeIn = () => {
+                    if (nebula.material.opacity < 1) {
+                        nebula.material.opacity += 0.05;
+                        requestAnimationFrame(fadeIn);
+                    }
+                };
+                fadeIn();
+            }
+            if (borderLights) {
+                borderLights.visible = true;
+            }
+        });
+
+        video.addEventListener('ended', handleVideoEnd);
+
+        // Inicialização
+        window.addEventListener('load', () => {
+            initThreeJS();
+            animate();
+            tryAutoplay();
+            initArchLights(); // Inicializa as luzes da lápide
+            
+            // Ajuste inicial de tamanho
+            const videoWrapper = document.getElementById('videoWrapper');
+            const windowAspect = window.innerWidth / window.innerHeight;
+            
+            if(windowAspect > 0.56) { // Se tela mais larga que 9:16
+                videoWrapper.style.height = '95vh';
+                videoWrapper.style.width = `${95 * 0.56}vh`;
+            }
+        });
+
+        // Redimensionamento responsivo
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            const videoWrapper = document.getElementById('videoWrapper');
+            const windowAspect = window.innerWidth / window.innerHeight;
+            
+            if(windowAspect > 0.56) {
+                videoWrapper.style.height = '95vh';
+                videoWrapper.style.width = `${95 * 0.56}vh`;
+            } else {
+                videoWrapper.style.width = '90%';
+                videoWrapper.style.height = 'auto';
+            }
+        });
+    </script>
+</body>
+
+</html>
+
