@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Memorial - Paulo Mazza</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap"
@@ -18,6 +21,23 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .splash-container, .memorial-container {
+            height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        @media (hover: none) {
+            body {
+                min-height: -webkit-fill-available;
+            }
         }
 
         body {
@@ -2186,6 +2206,52 @@
                 height: 85vh;
             }
         }
+
+        /* Fullscreen Toggle Button */
+        #fullscreenToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(197, 164, 127, 0.1);
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        #fullscreenToggle i {
+            color: #c5a47f;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        #fullscreenToggle:hover {
+            background: rgba(197, 164, 127, 0.2);
+            transform: scale(1.1);
+        }
+
+        #fullscreenToggle:hover i {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            #fullscreenToggle {
+                top: 15px;
+                right: 15px;
+                width: 35px;
+                height: 35px;
+            }
+
+            #fullscreenToggle i {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -2343,6 +2409,10 @@
         <button id="playButton" class="glow-button">
             <i class="fas fa-play"></i>
         </button>
+    </div>
+
+    <div id="fullscreenToggle" onclick="toggleFullscreen()">
+        <i class="fas fa-expand"></i>
     </div>
 
     <script>
@@ -2609,11 +2679,15 @@
                 initCoverStars();
             }, 100);
 
-            // Ativa a aba de Biografia por padrão
-            selectedMemorial.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            selectedMemorial.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            selectedMemorial.querySelector('.tab-content').classList.add('active');
-            selectedMemorial.querySelector('.tab-btn').classList.add('active');
+            // Mantém a última aba ativa ou usa a biografia como padrão
+            const activeTab = selectedMemorial.querySelector('.tab-content.active');
+            const activeBtn = selectedMemorial.querySelector('.tab-btn.active');
+            
+            if (!activeTab || !activeBtn) {
+                // Se não houver aba ativa, ativa a biografia
+                selectedMemorial.querySelector('.tab-content').classList.add('active');
+                selectedMemorial.querySelector('.tab-btn').classList.add('active');
+            }
         }
 
         function showSplash() {
@@ -2701,42 +2775,25 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('threejsContainer').appendChild(renderer.domElement);
 
-            // Configuração do campo estelar
-            const createStarField = (count, radius, color) => {
+            // Configuração do campo estelar simplificado
+            const createStarField = (count, radius) => {
                 const geometry = new THREE.BufferGeometry();
                 const positions = new Float32Array(count * 3);
-                const colors = new Float32Array(count * 3);
-                const colorObj = new THREE.Color(color);
-
+                
                 for(let i = 0; i < count; i++) {
                     const i3 = i * 3;
-                    
-                    // Posicionamento nas bordas (topo 20% e laterais 30%)
-                    const edge = Math.random();
-                    if(edge < 0.6) { // Laterais
-                        positions[i3] = (Math.random() > 0.5 ? 1 : -1) * (0.7 + Math.random() * 0.3) * radius;
-                        positions[i3 + 1] = (Math.random() - 0.5) * radius * 0.8;
-                    } else { // Topo
-                        positions[i3] = (Math.random() - 0.5) * radius * 0.8;
-                        positions[i3 + 1] = 0.7 + Math.random() * 0.3 * radius;
-                    }
-                    
-                    positions[i3 + 2] = -Math.random() * radius;
-
-                    // Variação de cor
-                    colors[i3] = colorObj.r + (Math.random() * 0.2 - 0.1);
-                    colors[i3 + 1] = colorObj.g + (Math.random() * 0.2 - 0.1);
-                    colors[i3 + 2] = colorObj.b + (Math.random() * 0.2 - 0.1);
+                    positions[i3] = (Math.random() - 0.5) * radius;
+                    positions[i3 + 1] = (Math.random() - 0.5) * radius;
+                    positions[i3 + 2] = (Math.random() - 0.5) * radius;
                 }
 
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
                 return new THREE.Points(
                     geometry,
                     new THREE.PointsMaterial({
                         size: 0.25,
-                        vertexColors: true,
+                        color: 0xFFFFFF,
                         transparent: true,
                         opacity: 0.8,
                         sizeAttenuation: true,
@@ -2745,17 +2802,8 @@
                 );
             };
 
-            // Camadas de estrelas
-            const starLayers = [
-                { count: 800, radius: 150, color: 0xc5a47f }, // Camada dourada próxima
-                { count: 500, radius: 100, color: 0x89a2d8 }, // Camada azul distante
-                { count: 300, radius: 150, color: 0xffffff }  // Estrelas brancas de fundo
-            ];
-
-            starLayers.forEach(layer => {
-                const stars = createStarField(layer.count, layer.radius, layer.color);
-                scene.add(stars);
-            });
+            // Adiciona estrelas
+            scene.add(createStarField(1000, 100));
 
             // Chuva de meteoros
             const meteorGeometry = new THREE.BufferGeometry();
@@ -2765,13 +2813,13 @@
 
             for(let i = 0; i < meteorCount; i++) {
                 const i3 = i * 3;
-                meteorPositions[i3] = (Math.random() - 0.5) * 60; // Posição X inicial
-                meteorPositions[i3 + 1] = 30 + Math.random() * 20; // Posição Y inicial
-                meteorPositions[i3 + 2] = -Math.random() * 50; // Profundidade Z
+                meteorPositions[i3] = (Math.random() - 0.5) * 60;
+                meteorPositions[i3 + 1] = 30 + Math.random() * 20;
+                meteorPositions[i3 + 2] = -Math.random() * 50;
                 
-                meteorVelocities[i3] = (Math.random() - 0.5) * 0.1; // Velocidade X
-                meteorVelocities[i3 + 1] = -(0.5 + Math.random() * 0.5); // Velocidade Y
-                meteorVelocities[i3 + 2] = 0; // Velocidade Z
+                meteorVelocities[i3] = (Math.random() - 0.5) * 0.1;
+                meteorVelocities[i3 + 1] = -(0.5 + Math.random() * 0.5);
+                meteorVelocities[i3 + 2] = 0;
             }
 
             meteorGeometry.setAttribute('position', new THREE.BufferAttribute(meteorPositions, 3));
@@ -2780,7 +2828,7 @@
                 meteorGeometry,
                 new THREE.PointsMaterial({
                     size: 1.5,
-                    color: 0xff9933,
+                    color: 0xc5a47f, // Cor dourada para os meteoros
                     transparent: true,
                     opacity: 0.7,
                     sizeAttenuation: true,
@@ -2789,102 +2837,6 @@
             );
             scene.add(meteors);
 
-            // Nebulosa sutil nas bordas
-            const nebulaGeometry = new THREE.PlaneGeometry(200, 200);
-            const nebulaMaterial = new THREE.ShaderMaterial({
-                uniforms: {
-                    time: { value: 0 },
-                    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-                },
-                vertexShader: `
-                    varying vec2 vUv;
-                    void main() {
-                        vUv = uv;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    uniform float time;
-                    uniform vec2 resolution;
-                    varying vec2 vUv;
-                    
-                    void main() {
-                        vec2 uv = (vUv - 0.5) * 2.0;
-                        float mask = smoothstep(0.7, 1.2, length(uv));
-                        
-                        vec3 color = vec3(0.0);
-                        for(float i = 0.0; i < 3.0; i++) {
-                            vec2 offset = vec2(
-                                sin(time * 0.3 + i * 2.0) * 0.2,
-                                cos(time * 0.2 + i * 1.5) * 0.2
-                            );
-                            color += 0.3 * vec3(
-                                0.7 + 0.3 * sin(uv.x * 10.0 + time + i),
-                                0.5 + 0.2 * cos(uv.y * 8.0 + time + i),
-                                0.9 + 0.1 * sin(time * 0.5)
-                            ) * (1.0 - mask);
-                        }
-                        
-                        gl_FragColor = vec4(color * 0.4, 1.0);
-                    }
-                `,
-                transparent: true,
-                blending: THREE.AdditiveBlending
-            });
-            
-            const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
-            nebula.position.z = -100;
-            nebula.material.opacity = 0; // Começa invisível
-            scene.add(nebula);
-
-            // Luzes da borda do vídeo
-            const borderLightsGeometry = new THREE.BufferGeometry();
-            const borderLightsCount = 20;
-            const borderLightsPositions = new Float32Array(borderLightsCount * 3);
-            const borderLightsProgress = new Float32Array(borderLightsCount);
-            
-            // Calcula as dimensões do retângulo baseado no tamanho do vídeo
-            const videoWidth = 15; // Ajuste conforme necessário
-            const videoHeight = videoWidth * (16/9);
-            const borderPadding = 0.5; // Espaço extra ao redor do vídeo
-            
-            for(let i = 0; i < borderLightsCount; i++) {
-                borderLightsProgress[i] = (i / borderLightsCount) * 4; // 4 lados
-                const progress = borderLightsProgress[i];
-                const i3 = i * 3;
-                
-                // Posiciona as luzes ao longo do retângulo
-                if(progress < 1) { // Lado superior
-                    borderLightsPositions[i3] = -videoWidth/2 + progress * videoWidth;
-                    borderLightsPositions[i3 + 1] = videoHeight/2 + borderPadding;
-                } else if(progress < 2) { // Lado direito
-                    borderLightsPositions[i3] = videoWidth/2 + borderPadding;
-                    borderLightsPositions[i3 + 1] = videoHeight/2 - (progress-1) * videoHeight;
-                } else if(progress < 3) { // Lado inferior
-                    borderLightsPositions[i3] = videoWidth/2 - (progress-2) * videoWidth;
-                    borderLightsPositions[i3 + 1] = -videoHeight/2 - borderPadding;
-                } else { // Lado esquerdo
-                    borderLightsPositions[i3] = -videoWidth/2 - borderPadding;
-                    borderLightsPositions[i3 + 1] = -videoHeight/2 + (progress-3) * videoHeight;
-                }
-                borderLightsPositions[i3 + 2] = 0;
-            }
-            
-            borderLightsGeometry.setAttribute('position', new THREE.BufferAttribute(borderLightsPositions, 3));
-            
-            const borderLights = new THREE.Points(
-                borderLightsGeometry,
-                new THREE.PointsMaterial({
-                    size: 1.0,
-                    color: 0xc5a47f,
-                    transparent: true,
-                    opacity: 0.8,
-                    blending: THREE.AdditiveBlending
-                })
-            );
-            borderLights.visible = false; // Começa invisível
-            scene.add(borderLights);
-
             camera.position.set(0, 0, 50);
             camera.lookAt(0, 0, 0);
         }
@@ -2892,18 +2844,8 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            const time = performance.now() * 0.001;
-            
-            // Animar estrelas
-            scene.children.forEach((obj, index) => {
-                if(index < 3) { // Camadas de estrelas
-                    obj.rotation.y += 0.0001 * (index + 1);
-                    obj.rotation.x += 0.00005 * (index + 1);
-                }
-            });
-
             // Animar meteoros
-            const meteors = scene.children[3];
+            const meteors = scene.children[1]; // Índice ajustado
             const positions = meteors.geometry.attributes.position.array;
             const velocities = meteorVelocities;
             
@@ -2921,36 +2863,6 @@
             }
             meteors.geometry.attributes.position.needsUpdate = true;
 
-            // Animar nebulosa
-            const nebula = scene.children[4];
-            nebula.material.uniforms.time.value = time;
-
-            // Animar luzes da borda
-            const borderLights = scene.children[5];
-            if (borderLights && borderLights.visible) {
-                const positions = borderLights.geometry.attributes.position.array;
-                for(let i = 0; i < borderLightsCount; i++) {
-                    borderLightsProgress[i] = (borderLightsProgress[i] + 0.01) % 4;
-                    const progress = borderLightsProgress[i];
-                    const i3 = i * 3;
-                    
-                    if(progress < 1) { // Lado superior
-                        positions[i3] = -videoWidth/2 + progress * videoWidth;
-                        positions[i3 + 1] = videoHeight/2 + borderPadding;
-                    } else if(progress < 2) { // Lado direito
-                        positions[i3] = videoWidth/2 + borderPadding;
-                        positions[i3 + 1] = videoHeight/2 - (progress-1) * videoHeight;
-                    } else if(progress < 3) { // Lado inferior
-                        positions[i3] = videoWidth/2 - (progress-2) * videoWidth;
-                        positions[i3 + 1] = -videoHeight/2 - borderPadding;
-                    } else { // Lado esquerdo
-                        positions[i3] = -videoWidth/2 - borderPadding;
-                        positions[i3 + 1] = -videoHeight/2 + (progress-3) * videoHeight;
-                    }
-                }
-                borderLights.geometry.attributes.position.needsUpdate = true;
-            }
-            
             renderer.render(scene, camera);
         }
 
@@ -3052,6 +2964,56 @@
                 videoWrapper.style.height = 'auto';
             }
         });
+
+        // Função para ativar tela cheia
+        function requestFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        // Verificar se já está em tela cheia
+        function isFullscreen() {
+            return document.fullscreenElement || 
+                   document.webkitFullscreenElement ||
+                   document.msFullscreenElement;
+        }
+
+        // Ativar tela cheia no primeiro toque
+        document.addEventListener('click', function initialFullscreen() {
+            if (!isFullscreen()) {
+                requestFullscreen();
+            }
+            document.removeEventListener('click', initialFullscreen);
+        });
+
+        // Gerenciar mudanças de tamanho
+        window.addEventListener('resize', () => {
+            if (!isFullscreen()) {
+                document.documentElement.style.height = `${window.innerHeight}px`;
+            }
+        });
+
+        // Inicializar altura
+        document.documentElement.style.height = `${window.innerHeight}px`;
+
+        function toggleFullscreen() {
+            if (!isFullscreen()) {
+                requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
     </script>
 </body>
 
