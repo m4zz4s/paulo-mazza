@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,6 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
     <style>
         /* ESTILOS GERAIS */
         * {
@@ -23,15 +24,18 @@
             padding: 0;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
-            overflow: hidden;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            touch-action: manipulation;
         }
 
-        .splash-container, .memorial-container {
-            height: 100vh;
+        .splash-container,
+        .memorial-container {
+            min-height: 100vh;
             min-height: -webkit-fill-available;
+            overflow-y: auto;
         }
 
         @media (hover: none) {
@@ -121,7 +125,7 @@
 
         .arch-light {
             box-shadow: 0 0 15px rgba(197, 164, 127, 0.6),
-                       0 0 30px rgba(197, 164, 127, 0.3);
+                0 0 30px rgba(197, 164, 127, 0.3);
             transition: opacity 0.3s ease;
         }
 
@@ -609,8 +613,10 @@
         /* Ajuste do main-container para centralizar e manter largura adequada */
         .main-container {
             margin: 20px auto;
-            width: 98%; /* Increased from 95% */
-            max-width: 1800px; /* Increased from 1400px */
+            width: 98%;
+            /* Increased from 95% */
+            max-width: 1800px;
+            /* Increased from 1400px */
             padding: 20px;
             background: transparent;
             border-radius: 15px;
@@ -625,15 +631,18 @@
         /* Ajuste para o container de conteúdo das tabs */
         .tab-content-container {
             width: 100%;
-            max-width: 1200px; /* Increased from 800px */
+            max-width: 1200px;
+            /* Increased from 800px */
             margin: 0 auto;
             padding: 20px;
         }
 
         .tab-content {
             width: 100%;
-            max-width: 1600px; /* Increased from 1200px */
-            padding: 40px; /* Increased from 30px */
+            max-width: 1600px;
+            /* Increased from 1200px */
+            padding: 40px;
+            /* Increased from 30px */
             box-sizing: border-box;
             background: transparent;
             height: auto;
@@ -840,10 +849,12 @@
         #biografia-carlos,
         #biografia-lucia {
             background: rgba(45, 45, 45, 0.95);
-            padding: 60px; /* Increased from 40px */
+            padding: 60px;
+            /* Increased from 40px */
             border-radius: 15px;
             margin: 0 auto;
-            max-width: 1600px; /* Increased from 1200px */
+            max-width: 1600px;
+            /* Increased from 1200px */
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(197, 164, 127, 0.3);
@@ -888,110 +899,103 @@
                 0 0 20px rgba(197, 164, 127, 0.4);
         }
 
+        /* Estilos específicos para Biografia */
+      /* BIOGRAFIA - LAYOUT AMPLIADO */
+    #biografia-paulo p,
+    #biografia-maria p,
+    #biografia-joao p,
+    #biografia-ana p,
+    #biografia-carlos p,
+    #biografia-lucia p {
+        font-size: 1.25rem;
+        line-height: 1.9;
+        text-align: justify;
+        color: #f0f0f0;
+        padding: 40px 15px; /* Reduzido padding horizontal */
+        margin: 30px auto; /* Centralizado e margem vertical */
+        background: linear-gradient(145deg, 
+            rgba(26, 26, 26, 0.97) 0%,
+            rgba(35, 35, 35, 0.95) 100%);
+        border-radius: 12px;
+        border-left: 5px solid #c5a47f;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35),
+                    0 0 50px rgba(197, 164, 127, 0.2);
+        position: relative;
+        z-index: 5;
+        max-width: 100%; /* Alterado de 90% */
+        width: 100%;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        backdrop-filter: blur(8px);
+        transform-origin: left center;
+        text-justify: inter-word;
+        box-sizing: border-box; /* Garantir que padding está incluído na largura */
+    }
+
+    /* AJUSTES DE RESPONSIVIDADE */
+    @media (min-width: 1600px) {
         #biografia-paulo p,
         #biografia-maria p,
         #biografia-joao p,
         #biografia-ana p,
         #biografia-carlos p,
         #biografia-lucia p {
-            font-size: 1.2rem;
-            line-height: 2;
-            text-align: justify;
-            color: #e0e0e0;
-            padding: 35px;
-            background: rgba(26, 26, 26, 0.7);
-            border-radius: 10px;
-            margin: 25px 0;
-            position: relative;
-            border-left: 3px solid #c5a47f;
-            box-shadow:
-                0 2px 10px rgba(0, 0, 0, 0.2),
-                0 0 20px rgba(197, 164, 127, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            backdrop-filter: blur(5px);
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-            /* Novos estilos para formatação de texto */
-            white-space: pre-line;
-            word-wrap: break-word;
-            word-break: normal;
-            hyphens: auto;
-            -webkit-hyphens: auto;
-            -ms-hyphens: auto;
+            /* max-width removido, herda 100% */
+            padding: 50px 30px; /* Reduzido padding horizontal */
         }
+    }
 
-        /* Ajuste específico para parágrafos dentro da biografia */
-        #biografia-paulo p strong,
-        #biografia-maria p strong,
-        #biografia-joao p strong,
-        #biografia-ana p strong,
-        #biografia-carlos p strong,
-        #biografia-lucia p strong {
-            color: #c5a47f;
-            font-weight: 600;
+    @media (max-width: 1200px) {
+        #biografia-paulo p,
+        #biografia-maria p,
+        #biografia-joao p,
+        #biografia-ana p,
+        #biografia-carlos p,
+        #biografia-lucia p {
+            max-width: 100%; /* Alterado de 95% */
+            padding: 35px 20px; /* Reduzido padding horizontal */
         }
+    }
 
-        /* Ajuste para citações ou textos em itálico */
-        #biografia-paulo p em,
-        #biografia-maria p em,
-        #biografia-joao p em,
-        #biografia-ana p em,
-        #biografia-carlos p em,
-        #biografia-lucia p em {
-            color: #c5a47f;
-            font-style: italic;
-            opacity: 0.9;
+    @media (max-width: 992px) {
+        #biografia-paulo p,
+        #biografia-maria p,
+        #biografia-joao p,
+        #biografia-ana p,
+        #biografia-carlos p,
+        #biografia-lucia p {
+            line-height: 1.8;
+            padding: 30px 18px; /* Reduzido padding horizontal */
         }
+    }
 
-        /* Ajuste para espaçamento entre parágrafos */
-        #biografia-paulo p + p,
-        #biografia-maria p + p,
-        #biografia-joao p + p,
-        #biografia-ana p + p,
-        #biografia-carlos p + p,
-        #biografia-lucia p + p {
-            margin-top: 2rem;
+    @media (max-width: 768px) {
+        #biografia-paulo p,
+        #biografia-maria p,
+        #biografia-joao p,
+        #biografia-ana p,
+        #biografia-carlos p,
+        #biografia-lucia p {
+            max-width: 100%;
+            border-radius: 8px;
+            padding: 30px 15px; /* Reduzido padding horizontal */
+            margin: 25px 0; /* Removida margem horizontal */
+            font-size: 1.15rem;
         }
+    }
 
-        /* Ajustes responsivos */
-        @media screen and (max-width: 768px) {
-            #biografia-paulo p,
-            #biografia-maria p,
-            #biografia-joao p,
-            #biografia-ana p,
-            #biografia-carlos p,
-            #biografia-lucia p {
-                font-size: 1.1rem;
-                line-height: 1.8;
-                padding: 25px;
-            }
+    @media (max-width: 576px) {
+        #biografia-paulo p,
+        #biografia-maria p,
+        #biografia-joao p,
+        #biografia-ana p,
+        #biografia-carlos p,
+        #biografia-lucia p {
+            padding: 25px 10px; /* Reduzido padding horizontal */
+            font-size: 1.1rem;
+            line-height: 1.75;
+            border-left-width: 4px;
         }
-
-        @media screen and (max-width: 480px) {
-            #biografia-paulo p,
-            #biografia-maria p,
-            #biografia-joao p,
-            #biografia-ana p,
-            #biografia-carlos p,
-            #biografia-lucia p {
-                font-size: 1rem;
-                line-height: 1.6;
-                padding: 20px;
-            }
-        }
-
-        #biografia-paulo p:hover,
-        #biografia-maria p:hover,
-        #biografia-joao p:hover,
-        #biografia-ana p:hover,
-        #biografia-carlos p:hover,
-        #biografia-lucia p:hover {
-            transform: translateX(5px);
-            box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.3),
-                0 0 30px rgba(197, 164, 127, 0.15);
-        }
+    }
 
         /* Ajustes responsivos para as biografias */
         @media (max-width: 768px) {
@@ -1074,10 +1078,12 @@
         #depoimentos-carlos,
         #depoimentos-lucia {
             background: rgba(45, 45, 45, 0.95);
-            padding: 60px; /* Increased from 40px */
+            padding: 60px;
+            /* Increased from 40px */
             border-radius: 15px;
             margin: 0 auto;
-            max-width: 1600px; /* Increased from 1200px */
+            max-width: 1600px;
+            /* Increased from 1200px */
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(197, 164, 127, 0.3);
@@ -1719,9 +1725,11 @@
         /* Estilo unificado para todas as tabs */
         .tab-content {
             width: 100%;
-            max-width: 1600px; /* Increased from 1200px */
+            max-width: 1600px;
+            /* Increased from 1200px */
             margin: 0 auto;
-            padding: 40px; /* Increased from 30px */
+            padding: 40px;
+            /* Increased from 30px */
         }
 
         #recordacoes-paulo h2,
@@ -1974,7 +1982,8 @@
         .close-modal {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
+            /* Alterado de right para left */
             color: #c5a47f;
             font-size: 30px;
             font-weight: bold;
@@ -1988,6 +1997,8 @@
             align-items: center;
             transition: all 0.3s ease;
             border: 1px solid rgba(197, 164, 127, 0.3);
+            z-index: 1001;
+            /* Garante que fique acima de tudo */
         }
 
         .close-modal:hover {
@@ -2079,11 +2090,15 @@
         .memory-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 30px; /* Increased from 20px */
-            padding: 30px; /* Increased from 20px */
+            gap: 30px;
+            /* Increased from 20px */
+            padding: 30px;
+            /* Increased from 20px */
             width: 100%;
-            max-width: 1600px; /* Increased from 1200px */
-            margin: 0 auto 30px; /* Increased bottom margin */
+            max-width: 1600px;
+            /* Increased from 1200px */
+            margin: 0 auto 30px;
+            /* Increased bottom margin */
         }
 
         .memory-item {
@@ -2161,13 +2176,16 @@
 
         #videoWrapper {
             position: relative;
-            width: 300px;  /* Largura do vídeo estilo Reels */
-            height: 533px; /* Altura proporcional 9:16 */
+            width: 300px;
+            /* Largura do vídeo estilo Reels */
+            height: 533px;
+            /* Altura proporcional 9:16 */
             z-index: 3;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            margin-bottom: -50px; /* Ajuste para baixo */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: -50px;
+            /* Ajuste para baixo */
         }
 
         #introVideo {
@@ -2180,7 +2198,8 @@
 
         .glow-button {
             position: absolute;
-            z-index: 4; /* Aumentado para ficar acima do efeito 3D */
+            z-index: 4;
+            /* Aumentado para ficar acima do efeito 3D */
             bottom: 30px;
             background: rgba(197, 164, 127, 0.3);
             border: 2px solid #c5a47f;
@@ -2195,9 +2214,20 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 rgba(197,164,127,0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(197,164,127,0.5); }
-            100% { transform: scale(1); box-shadow: 0 0 0 rgba(197,164,127,0.3); }
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(197, 164, 127, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px rgba(197, 164, 127, 0.5);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(197, 164, 127, 0.3);
+            }
         }
 
         @media (max-width: 600px) {
@@ -2252,6 +2282,67 @@
                 font-size: 14px;
             }
         }
+
+        /* ========== AJUSTES PARA MOBILE ========== */
+        @media (max-width: 768px) {
+            .close-modal {
+                top: 15px;
+                left: 15px;
+                font-size: 24px;
+                width: 35px;
+                height: 35px;
+            }
+
+            #fullscreenToggle {
+                top: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .close-modal {
+                top: 10px;
+                left: 10px;
+                font-size: 20px;
+                width: 30px;
+                height: 30px;
+            }
+
+            #fullscreenToggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* ANIMAÇÃO DE ENTRADA */
+        @keyframes textEntrance {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Letra capitular removida conforme solicitado
+        #biografia-paulo p:first-of-type::first-letter,
+        #biografia-maria p:first-of-type::first-letter,
+        #biografia-joao p:first-of-type::first-letter,
+        #biografia-ana p:first-of-type::first-letter,
+        #biografia-carlos p:first-of-type::first-letter,
+        #biografia-lucia p:first-of-type::first-letter {
+            float: left;
+            font-size: 4.5em;
+            line-height: 0.8;
+            margin: 5px 15px 0 0;
+            color: #c5a47f;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        */
     </style>
 </head>
 
@@ -2317,38 +2408,11 @@
                     <div class="tab-content-container">
                         <div id="biografia-paulo" class="tab-content">
                             <h2>Sua História</h2>
-                            <p>**Paulo Augusto Romeiro Mazza** (19 de março de 1945 – 24 de fevereiro de 2016) foi um
-                                homem de múltiplos talentos, deixando um legado marcante em suas áreas de atuação e na
-                                vida daqueles que o cercaram. Nascido em 1945, dedicou parte de sua vida à carreira
-                                militar, alcançando a patente de **Tenente-Coronel da Aeronáutica**, onde demonstrou
-                                disciplina, liderança e comprometimento com a pátria. Sua passagem pela Força Aérea foi
-                                não apenas uma profissão, mas uma missão que refletiu seu profundo senso de dever.
-
-                                Após encerrar sua carreira militar, Paulo Augusto empreendeu uma nova jornada ao fundar
-                                uma **rede de assessoria advocatícia**, onde aplicou sua expertise em estratégia e
-                                organização, ajudando clientes a resolver questões complexas com eficiência. Sua
-                                transição para o mundo jurídico destacou sua versatilidade e capacidade de reinventar-se
-                                profissionalmente.
-
-                                Além de suas conquistas militares e empresariais, Paulo Augusto tinha uma paixão
-                                vibrante pela cultura brasileira. Como compositor de **enredos carnavalescos**,
-                                contribuiu para os carnavais de **São José dos Campos** e **Guaratinguetá**, cidades
-                                onde seu talento artístico ganhou destaque. Em 2010, seu envolvimento com o samba e sua
-                                dedicação à cultura popular lhe renderam o título de **Rei do Samba de São José dos
-                                Campos**, uma honra que celebrou sua capacidade de unir tradição e criatividade.
-
-                                Como família, deixou um legado de amor e inspiração. Foi pai de **Paulo Junior, Adriana,
-                                Auryana, Alexandra e Ariadne**, aos quais transmitiu valores de perseverança, respeito à
-                                cultura e compromisso com a excelência. Sua presença como líder, artista e pai foi
-                                marcada pela generosidade e pela capacidade de incentivar sonhos.
-
-                                Paulo Augusto Romeiro Mazza faleceu em 24 de fevereiro de 2016, deixando não apenas
-                                saudades, mas uma história de vida que continua a inspirar. Sua trajetória, entre a
-                                rigidez militar, a astúcia do Direito e a alegria do samba, simboliza a riqueza de uma
-                                existência dedicada a servir, criar e amar.
-
-                                *"Um coronel das alturas, um poeta do asfalto, um rei do samba e, acima de tudo, um
-                                eterno exemplo de dedicação."*</p>
+                            <p>Paulo Augusto Romeiro Mazza (19 de março de 1945 – 24 de fevereiro de 2016) foi um homem de múltiplos talentos, deixando um legado marcante em suas áreas de atuação e na vida daqueles que o cercaram. Nascido em 1945, dedicou parte de sua vida à carreira militar, alcançando a patente de Tenente-Coronel da Aeronáutica, onde demonstrou disciplina, liderança e comprometimento com a pátria. Sua passagem pela Força Aérea foi não apenas uma profissão, mas uma missão que refletiu seu profundo senso de dever.</p>
+                            <p>Após encerrar sua carreira militar, Paulo Augusto empreendeu uma nova jornada ao fundar uma rede de assessoria advocatícia, onde aplicou sua expertise em estratégia e organização, ajudando clientes a resolver questões complexas com eficiência. Sua transição para o mundo jurídico destacou sua versatilidade e capacidade de reinventar-se profissionalmente.</p>
+                            <p>Além de suas conquistas militares e empresariais, Paulo Augusto tinha uma paixão vibrante pela cultura brasileira. Como compositor de enredos carnavalescos, contribuiu para os carnavais de São José dos Campos e Guaratinguetá, cidades onde seu talento artístico ganhou destaque. Em 2010, seu envolvimento com o samba e sua dedicação à cultura popular lhe renderam o título de Rei do Samba de São José dos Campos, uma honra que celebrou sua capacidade de unir tradição e criatividade.</p>
+                            <p>Como família, deixou um legado de amor e inspiração. Foi pai de Paulo Junior, Adriana, Auryana, Alexandra e Ariadne, aos quais transmitiu valores de perseverança, respeito à cultura e compromisso com a excelência. Sua presença como líder, artista e pai foi marcada pela generosidade e pela capacidade de incentivar sonhos.</p>
+                            <p>Paulo Augusto Romeiro Mazza faleceu em 24 de fevereiro de 2016, deixando não apenas saudades, mas uma história de vida que continua a inspirar. Sua trajetória, entre a rigidez militar, a astúcia do Direito e a alegria do samba, simboliza a riqueza de uma existência dedicada a servir, criar e amar. "Um coronel das alturas, um poeta do asfalto, um rei do samba e, acima de tudo, um eterno exemplo de dedicação."</p>
                         </div>
                         <div id="recordacoes-paulo" class="tab-content">
                             <h2>Momentos Especiais</h2>
@@ -2473,14 +2537,14 @@
                 lights.forEach((light, index) => {
                     light.progress += 0.01;
                     const pos = getArchPosition(light.progress);
-                    
+
                     light.element.style.left = `${pos.x}px`;
                     light.element.style.top = `${pos.y}px`;
-                    
+
                     // Ajustar opacidade baseado na posição
                     const opacity = Math.sin(light.progress) * 0.5 + 0.5;
                     light.element.style.opacity = opacity;
-                    
+
                     // Reset quando completar o ciclo
                     if (light.progress > 3 * Math.PI) {
                         light.progress = Math.PI;
@@ -2499,7 +2563,7 @@
 
         // Efeito de estrelas na capa
         let coverScene, coverCamera, coverRenderer, coverStars;
-        
+
         function initCoverStars() {
             const container = document.getElementById('coverStarsContainer');
             if (!container) return;
@@ -2518,13 +2582,13 @@
             const velocities = new Float32Array(starCount * 3);
             const colors = new Float32Array(starCount * 3);
 
-            for(let i = 0; i < starCount; i++) {
+            for (let i = 0; i < starCount; i++) {
                 const i3 = i * 3;
                 // Posição
                 positions[i3] = (Math.random() - 0.5) * 100;
                 positions[i3 + 1] = (Math.random() - 0.5) * 100;
                 positions[i3 + 2] = (Math.random() - 0.5) * 50;
-                
+
                 // Velocidade
                 velocities[i3] = (Math.random() - 0.5) * 0.05;
                 velocities[i3 + 1] = (Math.random() - 0.5) * 0.05;
@@ -2571,7 +2635,7 @@
                 const positions = coverStars.geometry.attributes.position.array;
                 const time = Date.now() * 0.0001;
 
-                for(let i = 0; i < positions.length; i += 3) {
+                for (let i = 0; i < positions.length; i += 3) {
                     // Movimento base
                     positions[i] += velocities[i];
                     positions[i + 1] += velocities[i + 1];
@@ -2666,7 +2730,7 @@
                 coverRenderer.dispose();
             }
             if (coverScene) {
-                while(coverScene.children.length > 0) {
+                while (coverScene.children.length > 0) {
                     const object = coverScene.children[0];
                     if (object.geometry) object.geometry.dispose();
                     if (object.material) object.material.dispose();
@@ -2682,7 +2746,7 @@
             // Mantém a última aba ativa ou usa a biografia como padrão
             const activeTab = selectedMemorial.querySelector('.tab-content.active');
             const activeBtn = selectedMemorial.querySelector('.tab-btn.active');
-            
+
             if (!activeTab || !activeBtn) {
                 // Se não houver aba ativa, ativa a biografia
                 selectedMemorial.querySelector('.tab-content').classList.add('active');
@@ -2694,7 +2758,7 @@
             document.getElementById('splashScreen').style.display = 'block';
             document.getElementById('memorialContainer').style.display = 'none';
             document.getElementById('backButton').style.display = 'none'; // Garante que o botão fique oculto
-            
+
             // Cleanup cover stars
             const existingCanvas = document.getElementById('coverStarsContainer').querySelector('canvas');
             if (existingCanvas) {
@@ -2704,7 +2768,7 @@
                 coverRenderer.dispose();
             }
             if (coverScene) {
-                while(coverScene.children.length > 0) {
+                while (coverScene.children.length > 0) {
                     const object = coverScene.children[0];
                     if (object.geometry) object.geometry.dispose();
                     if (object.material) object.material.dispose();
@@ -2760,15 +2824,15 @@
     <script>
         // Configuração Three.js para efeito nas áreas laterais
         let scene, camera, renderer, particles;
-        const videoAspect = 9/16; // Proporção do Reels
+        const videoAspect = 9 / 16; // Proporção do Reels
 
         let meteorVelocities;
 
         function initThreeJS() {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ 
-                antialias: true, 
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
                 alpha: true,
                 powerPreference: "high-performance"
             });
@@ -2779,8 +2843,8 @@
             const createStarField = (count, radius) => {
                 const geometry = new THREE.BufferGeometry();
                 const positions = new Float32Array(count * 3);
-                
-                for(let i = 0; i < count; i++) {
+
+                for (let i = 0; i < count; i++) {
                     const i3 = i * 3;
                     positions[i3] = (Math.random() - 0.5) * radius;
                     positions[i3 + 1] = (Math.random() - 0.5) * radius;
@@ -2811,19 +2875,19 @@
             const meteorPositions = new Float32Array(meteorCount * 3);
             meteorVelocities = new Float32Array(meteorCount * 3);
 
-            for(let i = 0; i < meteorCount; i++) {
+            for (let i = 0; i < meteorCount; i++) {
                 const i3 = i * 3;
                 meteorPositions[i3] = (Math.random() - 0.5) * 60;
                 meteorPositions[i3 + 1] = 30 + Math.random() * 20;
                 meteorPositions[i3 + 2] = -Math.random() * 50;
-                
+
                 meteorVelocities[i3] = (Math.random() - 0.5) * 0.1;
                 meteorVelocities[i3 + 1] = -(0.5 + Math.random() * 0.5);
                 meteorVelocities[i3 + 2] = 0;
             }
 
             meteorGeometry.setAttribute('position', new THREE.BufferAttribute(meteorPositions, 3));
-            
+
             const meteors = new THREE.Points(
                 meteorGeometry,
                 new THREE.PointsMaterial({
@@ -2843,19 +2907,19 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            
+
             // Animar meteoros
             const meteors = scene.children[1]; // Índice ajustado
             const positions = meteors.geometry.attributes.position.array;
             const velocities = meteorVelocities;
-            
-            for(let i = 0; i < positions.length; i += 3) {
+
+            for (let i = 0; i < positions.length; i += 3) {
                 positions[i] += velocities[i];
                 positions[i + 1] += velocities[i + 1];
                 positions[i + 2] += velocities[i + 2];
-                
+
                 // Resetar posição quando sair da tela
-                if(positions[i + 1] < -30 || Math.abs(positions[i]) > 45) {
+                if (positions[i + 1] < -30 || Math.abs(positions[i]) > 45) {
                     positions[i] = (Math.random() - 0.5) * 60;
                     positions[i + 1] = 30 + Math.random() * 20;
                     positions[i + 2] = -Math.random() * 50;
@@ -2877,7 +2941,7 @@
             if (borderLights) {
                 borderLights.visible = false;
             }
-            
+
             overlay.style.opacity = 0;
             setTimeout(() => {
                 overlay.style.display = 'none';
@@ -2936,12 +3000,12 @@
             animate();
             tryAutoplay();
             initArchLights(); // Inicializa as luzes da lápide
-            
+
             // Ajuste inicial de tamanho
             const videoWrapper = document.getElementById('videoWrapper');
             const windowAspect = window.innerWidth / window.innerHeight;
-            
-            if(windowAspect > 0.56) { // Se tela mais larga que 9:16
+
+            if (windowAspect > 0.56) { // Se tela mais larga que 9:16
                 videoWrapper.style.height = '95vh';
                 videoWrapper.style.width = `${95 * 0.56}vh`;
             }
@@ -2952,11 +3016,11 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            
+
             const videoWrapper = document.getElementById('videoWrapper');
             const windowAspect = window.innerWidth / window.innerHeight;
-            
-            if(windowAspect > 0.56) {
+
+            if (windowAspect > 0.56) {
                 videoWrapper.style.height = '95vh';
                 videoWrapper.style.width = `${95 * 0.56}vh`;
             } else {
@@ -2978,9 +3042,9 @@
 
         // Verificar se já está em tela cheia
         function isFullscreen() {
-            return document.fullscreenElement || 
-                   document.webkitFullscreenElement ||
-                   document.msFullscreenElement;
+            return document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.msFullscreenElement;
         }
 
         // Ativar tela cheia no primeiro toque
@@ -3002,20 +3066,16 @@
         document.documentElement.style.height = `${window.innerHeight}px`;
 
         function toggleFullscreen() {
-            if (!isFullscreen()) {
-                requestFullscreen();
+            const element = document.documentElement;
+            if (!document.fullscreenElement) {
+                element.requestFullscreen().catch(err => {
+                    console.error('Erro ao entrar em fullscreen:', err);
+                });
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
-                    document.msExitFullscreen();
-                }
+                document.exitFullscreen();
             }
         }
     </script>
 </body>
 
 </html>
-
