@@ -2,1687 +2,437 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Memorial AR - Paulo Mazza</title>
-    
-    <!-- Bibliotecas para Realidade Aumentada -->
-    <script src="js/aframe.min.js"></script>
-    <script src="js/aframe-ar-nft.js"></script>
-    <script src="js/aframe-ar.js"></script>
-
-    <!--Bibliotecas do AR para ajuste de zoom e outros -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-    <script src="https://cdn.jsdelivr.net/npm/geolib@3.3.3/dist/geolib.min.js"></script>
-    
-    <!-- Bibliotecas de ícones e fontes -->
-    <link rel="stylesheet" href="css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorial Eterno - Família Mazza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* Reset e configurações base */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            color: #e0e0e0;
-            font-family: 'Playfair Display', serif;
-            line-height: 1.6;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            color: #f0f0f0;
             overflow-x: hidden;
             min-height: 100vh;
-            width: 100%;
-        }
-
-        /* Container principal */
-        .memorial-container {
             position: relative;
-            width: 100%;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Header com navegação */
-        .header {
+        /* Fundo animado */
+        .background-container {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 100;
-            padding: 15px 0;
-            transition: all 0.3s ease;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 90%);
+            overflow: hidden;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            background: #c5a47f;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(10, 10, 10, 0.8);
+            position: relative;
+            z-index: 10;
             border-bottom: 1px solid rgba(197, 164, 127, 0.2);
         }
 
-        .header.scrolled {
-            background: rgba(10, 10, 10, 0.98);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
+        .header-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
             color: #c5a47f;
-            font-weight: 600;
-            text-decoration: none;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(197, 164, 127, 0.3);
         }
 
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: #e0e0e0;
-            text-decoration: none;
-            font-weight: 400;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-menu a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #c5a47f;
-            transition: width 0.3s ease;
-        }
-
-        .nav-menu a:hover {
-            color: #c5a47f;
-        }
-
-        .nav-menu a:hover::after {
-            width: 100%;
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #c5a47f;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), 
-                        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop') center/cover;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 2;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        .profile-photo {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 5px solid #c5a47f;
-            background: #1a1a1a;
-            object-fit: cover;
-            margin: 0 auto 30px;
-            display: block;
-            box-shadow: 0 0 50px rgba(197, 164, 127, 0.4);
-            animation: photoGlow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes photoGlow {
-            0% { box-shadow: 0 0 50px rgba(197, 164, 127, 0.4); }
-            100% { box-shadow: 0 0 80px rgba(197, 164, 127, 0.7); }
-        }
-
-        .hero-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: clamp(3rem, 8vw, 6rem);
-            color: #c5a47f;
-            margin-bottom: 20px;
-            text-shadow: 0 0 30px rgba(197, 164, 127, 0.5);
-            animation: nameSlideIn 2s ease-out;
-        }
-
-        @keyframes nameSlideIn {
-            0% { opacity: 0; transform: translateY(50px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .hero-dates {
-            color: #e0e0e0;
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            margin-bottom: 40px;
-            opacity: 0.9;
-            animation: datesSlideIn 2.5s ease-out;
-        }
-
-        @keyframes datesSlideIn {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 0.9; transform: translateY(0); }
-        }
-
-        /* Botões de ação aprimorados */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 40px 0;
-            flex-wrap: wrap;
-            animation: buttonsSlideIn 3s ease-out;
-        }
-
-        @keyframes buttonsSlideIn {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .btn {
-            padding: 20px 45px;
-            border: 2px solid #c5a47f;
-            background: rgba(197, 164, 127, 0.1);
-            color: #c5a47f;
-            text-decoration: none;
-            border-radius: 50px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.4s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(197, 164, 127, 0.2), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            background: rgba(197, 164, 127, 0.3);
-            box-shadow: 0 0 30px rgba(197, 164, 127, 0.5);
-            transform: translateY(-3px) scale(1.05);
-        }
-
-        .btn-ar {
-            background: linear-gradient(135deg, #c5a47f, #d4af37);
-            color: #1a1a1a;
-            font-weight: 700;
-            animation: arPulse 2s infinite;
-            box-shadow: 0 10px 30px rgba(197, 164, 127, 0.4);
-        }
-
-        @keyframes arPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Seções de conteúdo */
-        .content-section {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-title {
-            font-family: 'Great Vibes', cursive;
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            color: #c5a47f;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(197, 164, 127, 0.3);
-        }
-
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: rgba(224, 224, 224, 0.8);
+        .header-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: #aaa;
             max-width: 600px;
             margin: 0 auto;
-            line-height: 1.8;
         }
 
-        /* Seção Biografia */
-        .biografia-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .biografia-image {
-            position: relative;
-        }
-
-        .biografia-image img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .biografia-image:hover img {
-            transform: scale(1.05);
-        }
-
-        .biografia-text {
-            background: rgba(45, 45, 45, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(197, 164, 127, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .biografia-text h3 {
-            font-family: 'Cinzel', serif;
-            color: #c5a47f;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-        }
-
-        .biografia-text p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        /* Galeria de momentos */
-        .momentos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .momento-card {
-            background: rgba(45, 45, 45, 0.8);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(197, 164, 127, 0.3);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-
-        .momento-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(197, 164, 127, 0.2);
-        }
-
-        .momento-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .momento-card:hover .momento-image {
-            transform: scale(1.1);
-        }
-
-        .momento-content {
-            padding: 25px;
-        }
-
-        .momento-title {
-            font-family: 'Cinzel', serif;
-            color: #c5a47f;
-            font-size: 1.3rem;
-            line-height: 1em;
-            vertical-align: middle;
-            line-height: 1em;
-            vertical-align: middle;
-            margin-bottom: 10px;
-        }
-
-        .momento-description {
-            color: rgba(224, 224, 224, 0.9);
-            line-height: 1.6;
-        }
-
-        .momento-date {
-            color: #c5a47f;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            font-style: italic;
-        }
-
-        /* Seção de depoimentos */
-        .depoimentos-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-top: 40px;
-        }
-
-        .depoimento-card {
-            background: rgba(45, 45, 45, 0.8);
-            padding: 35px;
-            border-radius: 20px;
-            border: 1px solid rgba(197, 164, 127, 0.3);
-            position: relative;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s ease;
-        }
-
-        .depoimento-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(197, 164, 127, 0.2);
-        }
-
-        .depoimento-card::before {
-            content: '"';
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            font-size: 4rem;
-            color: #c5a47f;
-            font-family: 'Great Vibes', cursive;
-        }
-
-        .depoimento-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #e0e0e0;
-            margin-bottom: 25px;
-            font-style: italic;
-        }
-
-        .depoimento-author {
+        /* Container principal */
+        .splash-container {
             display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .author-photo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #c5a47f;
-            object-fit: cover;
-        }
-
-        .author-info h4 {
-            color: #c5a47f;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .author-info p {
-            color: rgba(224, 224, 224, 0.7);
-            font-size: 0.9rem;
-        }
-
-        /* Estilos para AR (mantidos do original) */
-        .ar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            display: none;
-            background: #000;
-        }
-
-        .ar-controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            z-index: 1001;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ar-close {
-            background: rgba(0, 0, 0, 0.8);
-            color: #c5a47f;
-            border: 2px solid #c5a47f;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-family: 'Playfair Display', serif;
-            transition: all 0.3s ease;
-        }
-
-        .ar-close:hover {
-            background: rgba(197, 164, 127, 0.2);
-        }
-
-        .ar-info {
-            background: rgba(0, 0, 0, 0.8);
-            color: #c5a47f;
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            max-width: 250px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .ar-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #c5a47f;
-            font-size: 1.2rem;
-            text-align: center;
-            z-index: 1002;
-        }
-
-        .spinner {
-            border: 3px solid rgba(197, 164, 127, 0.3);
-            border-top: 3px solid #c5a47f;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* === NOVOS ESTILOS PARA NAVEGAÇÃO AR === */
-        .ar-navigation {
-            position: fixed;
-            bottom: 30px;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            padding: 20px;
-            text-align: center;
-            z-index: 10000;
-            border-top: 2px solid #c5a47f;
-            backdrop-filter: blur(10px);
-            display: none; /* Inicialmente oculto */
-        }
-
-        .navigation-info {
-            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .compass {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #c5a47f;
-            border-radius: 50%;
+            padding: 40px 20px;
+            text-align: center;
             position: relative;
+            z-index: 1;
+            min-height: calc(100vh - 100px);
         }
 
-        .compass-arrow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 3px;
-            height: 25px;
-            background: #c5a47f;
-            transform-origin: top;
-            transform: translateX(-50%);
+        /* Grid da família */
+        .family-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .family-member {
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+        }
+
+        .family-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(197, 164, 127, 0.2);
+            border-color: rgba(197, 164, 127, 0.6);
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .family-member img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 0.5s ease;
         }
 
-        .distance {
-            font-size: 1.4rem;
-            color: #c5a47f;
-            font-weight: 700;
-            min-width: 80px;
+        .family-member:hover img {
+            transform: scale(1.05);
         }
 
-        #navigationText {
-            font-size: 1.1rem;
-            color: #e0e0e0;
-            margin: 10px 0;
-        }
-
-        /* Calibração manual */
-        .manual-calibration {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 10, 10, 0.95);
-            padding: 15px;
-            border-radius: 15px;
-            z-index: 10001;
-            display: none;
-            border: 1px solid #c5a47f;
-        }
-
-        .calibration-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .calibration-btn {
-            background: rgba(197, 164, 127, 0.2);
-            border: 1px solid #c5a47f;
-            color: #c5a47f;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .calibration-btn:hover {
-            background: rgba(197, 164, 127, 0.3);
-        }
-
-        /* Footer */
-        .footer {
-            background: rgba(10, 10, 10, 0.95);
-            padding: 60px 0 30px;
-            text-align: center;
-            border-top: 1px solid rgba(197, 164, 127, 0.3);
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .footer-message {
-            font-family: 'Great Vibes', cursive;
-            font-size: 2rem;
-            color: #c5a47f;
-            margin-bottom: 20px;
-        }
-
-        .footer-text {
-            color: rgba(224, 224, 224, 0.8);
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        .footer-links {
+        .member-info {
+            padding: 20px;
+            flex-grow: 1;
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
+            flex-direction: column;
         }
 
-        .footer-links a {
+        .member-name {
+            color: #e0e0e0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .member-dates {
             color: #c5a47f;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 500;
         }
 
-        .footer-links a:hover {
-            opacity: 0.7;
-        }
-
-        .copyright {
-            color: rgba(224, 224, 224, 0.6);
-            font-size: 0.9rem;
+        .member-quote {
+            font-style: italic;
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-top: auto;
+            padding-top: 15px;
             border-top: 1px solid rgba(197, 164, 127, 0.2);
-            padding-top: 20px;
+        }
+
+        .enter-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #c5a47f, #b08d5f);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(197, 164, 127, 0.3);
+        }
+
+        .enter-button:hover {
+            background: linear-gradient(135deg, #d4b58c, #c5a47f);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(197, 164, 127, 0.4);
+        }
+
+        /* Rodapé */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: rgba(10, 10, 10, 0.9);
+            border-top: 1px solid rgba(197, 164, 127, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .brand-footer {
+            color: #c5a47f;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .brand-footer span {
+            opacity: 0.8;
         }
 
         /* Responsividade */
-        @media (max-width: 1024px) {
-            .biografia-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .momentos-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        @media (max-width: 992px) {
+            .family-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 25px;
             }
-
-            .depoimentos-container {
-                grid-template-columns: 1fr;
-                gap: 30px;
+            
+            .member-photo {
+                height: 200px;
             }
         }
 
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
+            .family-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 20px;
+                padding: 30px 15px;
             }
-
-            .mobile-menu-toggle {
-                display: block;
+            
+            .member-photo {
+                height: 180px;
             }
-
-            .hero-name {
-                font-size: 3rem;
+            
+            .member-info {
+                padding: 15px;
             }
-
-            .profile-photo {
-                width: 150px;
-                height: 150px;
+            
+            .member-name {
+                font-size: 1.3rem;
             }
+        }
 
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
+        @media (max-width: 576px) {
+            .family-grid {
+                grid-template-columns: repeat(2, 1fr);
                 gap: 15px;
             }
-
-            .btn {
-                width: 90%;
-                max-width: 300px;
-                justify-content: center;
+            
+            .member-photo {
+                height: 160px;
             }
-
-            .content-section {
-                padding: 60px 0;
+            
+            .member-name {
+                font-size: 1.2rem;
             }
-
-            .biografia-text {
-                padding: 30px;
+            
+            .header-title {
+                font-size: 2rem;
             }
+        }
 
-            .momentos-grid {
+        @media (max-width: 400px) {
+            .family-grid {
                 grid-template-columns: 1fr;
+                max-width: 320px;
             }
-
-            .depoimento-card {
-                padding: 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-name {
-                font-size: 2.5rem;
-            }
-
-            .profile-photo {
-                width: 120px;
-                height: 120px;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .biografia-text {
-                padding: 20px;
-            }
-
-            .momento-content {
-                padding: 20px;
-            }
-
-            .depoimento-card {
-                padding: 20px;
+            
+            .member-photo {
+                height: 220px;
             }
         }
 
-        /* Animações de scroll */
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
         }
 
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Efeitos de partículas no fundo */
-        .particles-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .particle-bg {
-            position: absolute;
-            background: #c5a47f;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: floatBg 8s ease-in-out infinite;
-        }
-
-        @keyframes floatBg {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
-        }
-
-        @font-face {
-            font-family: 'Great Vibes';
-            src: url('fonts/GreatVibes-Regular.ttf') format('truetype');
-        }
-
-        @font-face {
-            font-family: 'Playfair Display';
-            src: url('fonts/PlayfairDisplay-Regular.ttf') format('truetype');
-        }
-
-        @font-face {
-            font-family: 'Cinzel';
-            src: url('fonts/Cinzel-Regular.ttf') format('truetype');
-        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
-    <!-- Partículas de fundo -->
-    <div class="particles-bg">
-        <div class="particle-bg" style="width: 4px; height: 4px; left: 10%; top: 20%; animation-delay: 0s;"></div>
-        <div class="particle-bg" style="width: 3px; height: 3px; left: 20%; top: 60%; animation-delay: 2s;"></div>
-        <div class="particle-bg" style="width: 5px; height: 5px; left: 30%; top: 80%; animation-delay: 4s;"></div>
-        <div class="particle-bg" style="width: 2px; height: 2px; left: 40%; top: 30%; animation-delay: 1s;"></div>
-        <div class="particle-bg" style="width: 4px; height: 4px; left: 50%; top: 70%; animation-delay: 3s;"></div>
-        <div class="particle-bg" style="width: 3px; height: 3px; left: 60%; top: 40%; animation-delay: 5s;"></div>
-        <div class="particle-bg" style="width: 6px; height: 6px; left: 70%; top: 90%; animation-delay: 1.5s;"></div>
-        <div class="particle-bg" style="width: 2px; height: 2px; left: 80%; top: 50%; animation-delay: 3.5s;"></div>
-        <div class="particle-bg" style="width: 4px; height: 4px; left: 90%; top: 10%; animation-delay: 2.5s;"></div>
+    <!-- Fundo animado -->
+    <div class="background-container">
+        <div class="particles" id="particlesContainer"></div>
     </div>
-
+    
     <!-- Header -->
-    <header class="header" id="header">
-        <div class="nav-container">
-            <a href="#" class="logo">Memorial Paulo Mazza</a>
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="#biografia">Biografia</a></li>
-                    <li><a href="#momentos">Momentos</a></li>
-                    <li><a href="#depoimentos">Depoimentos</a></li>
-                    <li><a href="#ar" onclick="startAR()">Experiência 3D</a></li>
-                </ul>
-                <button class="mobile-menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Container principal -->
-    <div class="memorial-container">
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-content">
-                <img src="Fotos/perfil.jpg" 
-                     alt="Paulo Mazza" class="profile-photo">
-                <h1 class="hero-name">Paulo Mazza</h1>
-                <p class="hero-dates">15 de Março de 1950 • 22 de Setembro de 2024</p>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-ar" onclick="startAR()">
-                        <i class="fas fa-cube"></i>
-                        Experiência 3D
-                    </button>
-                    <a href="#biografia" class="btn">
-                        <i class="fas fa-book"></i>
-                        Biografia
-                    </a>
-                    <a href="#momentos" class="btn">
-                        <i class="fas fa-images"></i>
-                        Momentos Especiais
-                    </a>
-                    <a href="#depoimentos" class="btn">
-                        <i class="fas fa-heart"></i>
-                        Depoimentos
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Seção Biografia -->
-        <section class="content-section fade-in" id="biografia">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">História de Vida</h2>
-                    <p class="section-subtitle">
-                        Uma vida dedicada ao militarismo, à família e aos valores que transformam gerações
-                    </p>
-                </div>
-                
-                <div class="biografia-content">
-                    <div class="biografia-image">
-                        <img src="Fotos/ft1 (3).jpg" 
-                             alt="Paulo Mazza jovem">
-                    </div>
-                    
-                    <div class="biografia-text">
-                        <h3>Um Tenente Militar da Aeronautica</h3>
-                        <p>
-                            Paulo Mazza foi um homem dedicado à família e aos amigos. Nascido em São Paulo, 
-                            dedicou sua vida ao ensino e à educação de jovens. Formado em História pela USP, 
-                            lecionou por mais de 30 anos em escolas públicas, tocando a vida de milhares de 
-                            estudantes.
-                        </p>
-                        <p>
-                            Era apaixonado por música clássica, literatura e viagens. Suas aulas eram conhecidas 
-                            por despertar o interesse dos alunos pela história, sempre conectando o passado 
-                            com o presente de forma envolvente e inspiradora.
-                        </p>
-                        <p>
-                            Deixa esposa, três filhos e sete netos que guardam com carinho suas memórias e 
-                            ensinamentos. Seu legado continua vivo em cada vida que tocou ao longo de sua 
-                            jornada como educador e ser humano excepcional.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Seção Momentos Especiais -->
-        <section class="content-section fade-in" id="momentos">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Momentos Especiais</h2>
-                    <p class="section-subtitle">
-                        Memórias preciosas que eternizam os momentos mais marcantes de sua vida
-                    </p>
-                </div>
-                
-                <div class="momentos-grid">
-                    <div class="momento-card">
-                        <img src="Fotos/ft1 (2).jpg" 
-                             alt="Formatura" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Formatura em História</h3>
-                            <p class="momento-description">
-                                O dia em que Paulo se formou na USP, realizando seu sonho de se tornar professor 
-                                e educador. Um momento de orgulho para toda a família.
-                            </p>
-                            <p class="momento-date">Dezembro de 1975</p>
-                        </div>
-                    </div>
-                    
-                    <div class="momento-card">
-                        <img src="Fotos/ft1 (3).jpg" 
-                             alt="Casamento" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Casamento com Maria</h3>
-                            <p class="momento-description">
-                                O início de uma linda jornada ao lado de Maria, sua companheira de vida por 
-                                mais de 45 anos. Uma união baseada no amor e respeito mútuo.
-                            </p>
-                            <p class="momento-date">Fevereiro de 1978</p>
-                        </div>
-                    </div>
-                    
-                    <div class="momento-card">
-                        <img src="Fotos/ft1 (1).jpg" 
-                             alt="Primeiro filho" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Nascimento do Primeiro Filho</h3>
-                            <p class="momento-description">
-                                A chegada de Carlos, o primeiro dos três filhos, trouxe uma alegria imensa 
-                                e transformou Paulo em um pai dedicado e amoroso.
-                            </p>
-                            <p class="momento-date">Setembro de 1980</p>
-                        </div>
-                    </div>
-                    
-                    <div class="momento-card">
-                        <img src="Fotos/perfil.jpg" 
-                             alt="Aula especial" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Professor do Ano</h3>
-                            <p class="momento-description">
-                                Reconhecimento como Professor do Ano pela dedicação e inovação em suas aulas 
-                                de História, inspirando uma nova geração de estudantes.
-                            </p>
-                            <p class="momento-date">Novembro de 1995</p>
-                        </div>
-                    </div>
-                    
-                    <div class="momento-card">
-                        <img src="Fotos/ft1 (3).jpg" 
-                             alt="Aposentadoria" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Aposentadoria</h3>
-                            <p class="momento-description">
-                                Após 30 anos dedicados ao ensino, Paulo se aposentou deixando um legado 
-                                inesquecível na educação e na vida de seus alunos.
-                            </p>
-                            <p class="momento-date">Dezembro de 2008</p>
-                        </div>
-                    </div>
-                    
-                    <div class="momento-card">
-                        <img src="Fotos/ft1 (3).jpg" 
-                             alt="Netos" class="momento-image">
-                        <div class="momento-content">
-                            <h3 class="momento-title">Primeiro Neto</h3>
-                            <p class="momento-description">
-                                A chegada do primeiro neto trouxe uma nova dimensão de amor e alegria para 
-                                Paulo, que se tornou um avô carinhoso e presente.
-                            </p>
-                            <p class="momento-date">Maio de 2010</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Seção Depoimentos -->
-        <section class="content-section fade-in" id="depoimentos">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Depoimentos</h2>
-                    <p class="section-subtitle">
-                        Palavras de carinho e gratidão daqueles que tiveram suas vidas tocadas por Paulo
-                    </p>
-                </div>
-                
-                <div class="depoimentos-container">
-                    <div class="depoimento-card">
-                        <p class="depoimento-text">
-                            Paulo foi mais que um Avô, foi um mentor e inspiração. Suas aulas de Vida 
-                            me fizeram descobrir minha paixão pelo futuro e me levaram a seguir a carreira acadêmica de Tecnologia. 
-                            Sua dedicação e amor pelo ensino eram contagiantes.
-                        </p>
-                        <div class="depoimento-author">
-                            <img src="Fotos/ft5.jpg" 
-                                 alt="ALLAN Mazza" class="author-photo">
-                            <div class="author-info">
-                                <h4>ALLAN Mazza</h4>
-                                <p>Neto </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="depoimento-card">
-                        <p class="depoimento-text">
-                            Meu pai foi um exemplo de dedicação e amor pela família. Sempre presente, sempre 
-                            disposto a ajudar e ensinar. Seus valores e ensinamentos continuam guiando nossa 
-                            família todos os dias. Sentiremos sua falta para sempre.
-                        </p>
-                        <div class="depoimento-author">
-                            <img src="Fotos/ft9.png" 
-                                 alt="Carlos Mazza" class="author-photo">
-                            <div class="author-info">
-                                <h4>Carlos Mazza</h4>
-                                <p>Filho</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="depoimento-card">
-                        <p class="depoimento-text">
-                            Paulo era um colega excepcional, sempre disposto a compartilhar conhecimento e 
-                            experiências. Sua paixão pela educação era inspiradora e seu senso de humor 
-                            tornava os dias de trabalho mais leves. Um verdadeiro amigo.
-                        </p>
-                        <div class="depoimento-author">
-                            <img src="Fotos/capa17.jpg" 
-                                 alt="Roberto Santos" class="author-photo">
-                            <div class="author-info">
-                                <h4>Roberto Santos</h4>
-                                <p>Colega Professor</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="depoimento-card">
-                        <p class="depoimento-text">
-                            Vovô Paulo era mágico! Sempre tinha uma história interessante para contar e nos 
-                            ensinava coisas incríveis sobre o mundo. Ele fazia a gente se sentir especial e 
-                            amado. Vou guardar para sempre as memórias dos nossos momentos juntos.
-                        </p>
-                        <div class="depoimento-author">
-                            <img src="Fotos/capa10.jpg" 
-                                 alt="Sofia Mazza" class="author-photo">
-                            <div class="author-info">
-                                <h4>Sofia Mazza</h4>
-                                <p>Neta (12 anos)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <div class="header">
+        <h1 class="header-title">Família Mazza</h1>
+        <p class="header-subtitle">Um memorial eterno para celebrar a vida e as memórias de quem amamos</p>
     </div>
-
-    <!-- Container de Realidade Aumentada -->
-    <div class="ar-container" id="arContainer">
-        <!-- Controles AR -->
-        <div class="ar-controls">
-            <button class="ar-close" onclick="stopAR()">
-                <i class="fas fa-times"></i> Fechar AR
-            </button>
-            <div class="ar-info">
-                Mova o celular para explorar o memorial 3D
-            </div>
-        </div>
-
-        <!-- Loading AR -->
-        <div class="ar-loading" id="arLoading">
-            <div class="spinner"></div>
-            <p>Carregando experiência 3D...</p>
-            <p style="font-size: 0.9rem; margin-top: 10px;">
-                Permita o acesso à câmera quando solicitado
-            </p>
-        </div>
-
-        <!-- Sistema de navegação AR -->
-        <div class="ar-navigation" id="arNavigation">
-            <div class="navigation-info">
-                <div class="compass">
-                    <div class="compass-arrow" id="compassArrow"></div>
+    
+    <!-- Tela Splash da Família -->
+    <div class="splash-container">
+        <div class="family-grid">
+            <!-- Paulo Mazza -->
+            <div class="family-member fade-in">
+                <div class="member-photo">
+                    <img src="Fotos/perfil.jpg" alt="Paulo Mazza">
                 </div>
-                <div class="distance" id="distanceDisplay">-- m</div>
-            </div>
-            <p id="navigationText">Inicializando navegação AR...</p>
-            
-            <div class="manual-calibration" id="manualCalibration">
-                <p>Ajuste manual da posição:</p>
-                <div class="calibration-controls">
-                    <button class="calibration-btn" data-axis="x" data-dir="-">
-                        <i class="fas fa-arrow-left"></i> Esquerda
-                    </button>
-                    <button class="calibration-btn" data-axis="x" data-dir="+">
-                        Direita <i class="fas fa-arrow-right"></i>
-                    </button>
-                    <button class="calibration-btn" data-axis="z" data-dir="-">
-                        <i class="fas fa-arrow-up"></i> Aproximar
-                    </button>
-                    <button class="calibration-btn" data-axis="z" data-dir="+">
-                        Afastar <i class="fas fa-arrow-down"></i>
-                    </button>
+                <div class="member-info">
+                    <h3 class="member-name">Paulo Mazza</h3>
+                    <div class="member-dates">1945 - 2022</div>
+                    <p class="member-quote">"Sua sabedoria sempre guiou nossa família."</p>
+                    <a href="memorial.html" class="enter-button">Ver Memorial</a>
                 </div>
-                <button id="confirmCalibration" class="btn">
-                    <i class="fas fa-check"></i> Confirmar Posição
-                </button>
+            </div>
+            
+            <!-- Ana Mazza -->
+            <div class="family-member fade-in delay-1">
+                <div class="member-photo">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=776&q=80" alt="Ana Mazza">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Ana Mazza</h3>
+                    <div class="member-dates">1950 - 2020</div>
+                    <p class="member-quote">"O amor de mãe nunca se extingue."</p>
+                    <a href="ana_mazza.html" class="enter-button">Ver Memorial</a>
+                </div>
+            </div>
+            
+            <!-- Carlos Mazza -->
+            <div class="family-member fade-in delay-2">
+                <div class="member-photo">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Carlos Mazza">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Carlos Mazza</h3>
+                    <div class="member-dates">1970 - 2018</div>
+                    <p class="member-quote">"Sempre presente em nossas memórias."</p>
+                    <a href="carlos_mazza.html" class="enter-button">Ver Memorial</a>
+                </div>
+            </div>
+            
+            <!-- Sofia Mazza -->
+            <div class="family-member fade-in delay-3">
+                <div class="member-photo">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Sofia Mazza">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Sofia Mazza</h3>
+                    <div class="member-dates">1980 - 2015</div>
+                    <p class="member-quote">"Sua luz continua a brilhar em nós."</p>
+                    <a href="sofia_mazza.html" class="enter-button">Ver Memorial</a>
+                </div>
+            </div>
+            
+            <!-- Pedro Mazza -->
+            <div class="family-member fade-in delay-4">
+                <div class="member-photo">
+                    <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0e16019?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Pedro Mazza">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Pedro Mazza</h3>
+                    <div class="member-dates">1935 - 2010</div>
+                    <p class="member-quote">"Fundador de nossa grande família."</p>
+                    <a href="pedro_mazza.html" class="enter-button">Ver Memorial</a>
+                </div>
+            </div>
+            
+            <!-- Maria Mazza -->
+            <div class="family-member fade-in delay-5">
+                <div class="member-photo">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=776&q=80" alt="Maria Mazza">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Maria Mazza</h3>
+                    <div class="member-dates">1938 - 2008</div>
+                    <p class="member-quote">"O coração da nossa família."</p>
+                    <a href="maria_mazza.html" class="enter-button">Ver Memorial</a>
+                </div>
             </div>
         </div>
-
-        <!-- Cena A-Frame para AR -->
-        <a-scene
-            id="arScene"
-            embedded
-            arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-            vr-mode-ui="enabled: false"
-            renderer="logarithmicDepthBuffer: true; antialias: true; colorManagement: true;"
-            style="width: 100%; height: 100%;">
-            
-            <!-- Assets -->
-            <a-assets>
-                <a-asset-item id="rose-model" src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/rose.glb?v=1670000000000"></a-asset-item>
-                <img id="marble-texture" src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/marble_texture.jpg?v=1670000000001">
-                <img id="candle-flame" src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/flame.png?v=1670000000002">
-                <img id="photo1" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop">
-                <img id="photo2" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=200&fit=crop">
-                <img id="photo3" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=300&h=200&fit=crop">
-            </a-assets>
-
-            <!-- Iluminação Ambiente e Direcional -->
-            <a-entity light="type: ambient; color: #BBB; intensity: 0.8"></a-entity>
-            <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-1 2 1"></a-entity>
-
-            <!-- Marcador AR -->
-            <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-                
-                <!-- Lápide Memorial 3D Mais Realista -->
-                <a-entity 
-                    id="lapide"
-                    geometry="primitive: box; width: 1.2; height: 1.8; depth: 0.2"
-                    material="src: #marble-texture; repeat: 2 2; roughness: 0.3; metalness: 0.1"
-                    position="0 0.9 0" 
-                    rotation="0 0 0" 
-                    shadow="cast: true; receive: false"
-                    class="clickable"
-                    animation__scale="property: scale; to: 1.05 1.05 1.05; startEvents: click; dur: 300; easing: easeInOutQuad"
-                    animation__glow="property: material.emissiveIntensity; to: 0.1; startEvents: mouseenter; dur: 200; dir: alternate; loop: 1"
-                    event-set__mouseenter="_event: mouseenter; material.emissive: #c5a47f; material.emissiveIntensity: 0.1"
-                    event-set__mouseleave="_event: mouseleave; material.emissive: #000; material.emissiveIntensity: 0">
-                    
-                    <!-- Detalhes da Lápide (entalhes, etc.) -->
-                    <a-text 
-                        value="PAULO MAZZA"
-                        font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
-                        shader="msdf"
-                        color="#333"
-                        width="1.8"
-                        align="center"
-                        position="0 0.6 0.11"
-                        scale="0.8 0.8 0.8">
-                    </a-text>
-                    <a-text 
-                        value="1950 - 2024"
-                        font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
-                        shader="msdf"
-                        color="#444"
-                        width="1.5"
-                        align="center"
-                        position="0 0.4 0.11"
-                        scale="0.6 0.6 0.6">
-                    </a-text>
-                    <a-text 
-                        value="Amado esposo, pai e avô.
-Sempre em nossos corações."
-                        font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
-                        shader="msdf"
-                        color="#555"
-                        width="1.2"
-                        align="center"
-                        position="0 -0.1 0.11"
-                        wrap-count="25"
-                        scale="0.4 0.4 0.4">
-                    </a-text>
-
-                    <!-- Cruz 3D na Lápide -->
-                    <a-entity position="0 1.1 0.11">
-                        <a-box color="#8B4513" width="0.05" height="0.3" depth="0.05" position="0 0 0"></a-box>
-                        <a-box color="#8B4513" width="0.2" height="0.05" depth="0.05" position="0 0.05 0"></a-box>
-                    </a-entity>
-                </a-entity>
-                
-                <!-- Base da Lápide -->
-                <a-box 
-                    position="0 0.05 0" 
-                    scale="1.5 0.1 0.6"
-                    material="src: #marble-texture; repeat: 1.5 0.6; roughness: 0.5; metalness: 0.2"
-                    shadow="cast: true; receive: true">
-                </a-box>
-                
-                <!-- Velas Interativas Mais Realistas -->
-                <a-entity id="vela1" class="clickable" position="-0.8 0.1 0.4" rotation="0 0 0" 
-                          event-set__click="_event: click; light.intensity: 2; animation__flicker.enabled: true; animation__glow.enabled: true">
-                    <a-cylinder 
-                        scale="0.07 0.3 0.07"
-                        color="#FFF8DC"
-                        material="roughness: 0.6; metalness: 0.1"
-                        shadow="cast: true">
-                    </a-cylinder>
-                    <a-plane 
-                        id="flame1"
-                        material="src: #candle-flame; transparent: true; opacity: 0.9"
-                        width="0.1" height="0.15"
-                        position="0 0.22 0"
-                        look-at="[camera]"
-                        light="type: point; color: #FFD700; intensity: 0; distance: 1; decay: 2"
-                        animation__flicker="property: light.intensity; from: 1.8; to: 2.2; dur: 150; dir: alternate; loop: true; enabled: false; easing: easeInOutSine"
-                        animation__glow="property: scale; from: 1 1 1; to: 1.1 1.1 1.1; dur: 300; dir: alternate; loop: true; enabled: false; easing: easeInOutSine">
-                    </a-plane>
-                </a-entity>
-                
-                <a-entity id="vela2" class="clickable" position="0.8 0.1 0.4" rotation="0 0 0"
-                          event-set__click="_event: click; light.intensity: 2; animation__flicker.enabled: true; animation__glow.enabled: true">
-                    <a-cylinder 
-                        scale="0.07 0.3 0.07"
-                        color="#FFF8DC"
-                        material="roughness: 0.6; metalness: 0.1"
-                        shadow="cast: true">
-                    </a-cylinder>
-                    <a-plane 
-                        id="flame2"
-                        material="src: #candle-flame; transparent: true; opacity: 0.9"
-                        width="0.1" height="0.15"
-                        position="0 0.22 0"
-                        look-at="[camera]"
-                        light="type: point; color: #FFD700; intensity: 0; distance: 1; decay: 2"
-                        animation__flicker="property: light.intensity; from: 1.8; to: 2.2; dur: 150; dir: alternate; loop: true; enabled: false; easing: easeInOutSine"
-                        animation__glow="property: scale; from: 1 1 1; to: 1.1 1.1 1.1; dur: 300; dir: alternate; loop: true; enabled: false; easing: easeInOutSine">
-                    </a-plane>
-                </a-entity>
-                
-                <!-- Rosas Interativas que Caem (Modelo GLB) -->
-                <a-entity id="rosa-trigger1" class="clickable" position="-0.5 1.8 0.5" 
-                          event-set__click="_event: click; animation-mixer.clip: DropAction; animation-mixer.loop: once">
-                    <a-gltf-model src="#rose-model" scale="0.05 0.05 0.05" rotation="0 0 0"
-                                  animation-mixer="clip: Idle; loop: repeat"></a-gltf-model>
-                </a-entity>
-                
-                <a-entity id="rosa-trigger2" class="clickable" position="0.5 1.8 0.5" 
-                          event-set__click="_event: click; animation-mixer.clip: DropAction; animation-mixer.loop: once">
-                    <a-gltf-model src="#rose-model" scale="0.05 0.05 0.05" rotation="0 45 0"
-                                  animation-mixer="clip: Idle; loop: repeat"></a-gltf-model>
-                </a-entity>
-
-                <!-- Galeria de Fotos em AR (Momentos Especiais) -->
-                <a-entity id="photo-gallery" position="0 0.8 -1.5" rotation="0 0 0">
-                    <a-image src="Fotos/perfil.jpg" width="0.8" height="0.6" position="-1 0 0" rotation="0 15 0" class="clickable"
-                             animation__spin="property: rotation; to: 0 375 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                             event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                             event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Formatura" align="center" color="#FFF" position="0 -0.4 0.01" width="1.5"></a-text>
-                    </a-image>
-                    <a-image src="Fotos/ft1 (2).jpg" width="0.8" height="0.6" position="0 0 0" rotation="0 0 0" class="clickable"
-                             animation__spin="property: rotation; to: 0 360 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                             event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                             event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Casamento" align="center" color="#FFF" position="0 -0.4 0.01" width="1.5"></a-text>
-                    </a-image>
-                    <a-image src="Fotos/ft1 (3).jpg" width="0.8" height="0.6" position="1 0 0" rotation="0 -15 0" class="clickable"
-                             animation__spin="property: rotation; to: 0 345 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                             event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                             event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Nascimento do Filho" align="center" color="#FFF" position="0 -0.4 0.01" width="1.5"></a-text>
-                    </a-image>
-                </a-entity>
-                
-                <!-- Partículas Douradas Flutuantes (Sistema de Partículas) -->
-                <a-entity position="0 1.5 0" particle-system="preset: dust; particleCount: 50; color: #FFD700, #F0E68C; size: 0.1; maxAge: 4; velocityValue: 0 0.3 0; accelerationValue: 0 -0.05 0; opacity: 0.8, 0; texture: https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/sparkle.png?v=1670000000003"></a-entity>
-
-            </a-marker>
-
-            <!-- Câmera com controles de órbita (para debug, remover em produção) -->
-            <a-entity camera look-controls orbit-controls="target: 0 1 0; minDistance: 1; maxDistance: 10; initialPosition: 0 1.6 3"></a-entity>
-        </a-scene>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <h3 class="footer-message">Eternamente em nossos corações</h3>
-            <p class="footer-text">
-                Este memorial foi criado com amor para celebrar a vida e o legado de Paulo Mazza. 
-                Suas memórias continuarão vivas em todos nós que tivemos o privilégio de conhecê-lo.
-            </p>
-            <div class="footer-links">
-                <a href="#biografia">Biografia</a>
-                <a href="#momentos">Momentos</a>
-                <a href="#depoimentos">Depoimentos</a>
-                <a href="marcador.html">Marcador AR</a>
-            </div>
-            <p class="copyright">
-                © 2025 ONStars.memoriais/EternizeQrCode
-            </p>
-        </div>
-    </footer>
+    
+    <!-- Rodapé -->
+    <div class="footer">
+        <div class="brand-footer">EternizeQrCode <span> | Preservando Memórias</span></div>
+    </div>
 
     <script>
-        // Variáveis globais
-        let arActive = false;
-
-        // ===== NOVO SISTEMA AR SEM MARCADOR =====
-        const TUMULO_GPS = {
-            latitude: -23.550520, // COORDENADAS REAIS DO TÚMULO
-            longitude: -46.633308
-        };
-
-        let arPositionState = {
-            initialized: false,
-            calibration: { x: 0, z: 0, scale: 1 }
-        };
-
-        function startAR() {
-            // Esconder a cena AR antiga
-            document.getElementById('arContainer').style.display = 'none';
+        // Gerar partículas dinamicamente
+        function createParticles() {
+            const particlesContainer = document.getElementById('particlesContainer');
             
-            // Mostrar navegação AR
-            document.getElementById('arNavigation').style.display = 'block';
-            
-            // Iniciar posicionamento
-            startARPositioning();
-        }
-
-        function startARPositioning() {
-            // Verificar suporte
-            if (!navigator.geolocation) {
-                updateNavigationText("Seu dispositivo não suporta geolocalização precisa.");
-                return;
-            }
-
-            // Configurações de alta precisão
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            };
-
-            // Iniciar monitoramento
-            navigator.geolocation.watchPosition(
-                handlePositionUpdate,
-                handlePositionError,
-                options
-            );
-
-            // Iniciar monitoramento de orientação
-            if (window.DeviceOrientationEvent) {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
-        }
-
-        function handlePositionUpdate(position) {
-            const userCoords = position.coords;
-            const distance = calculateDistance(
-                userCoords.latitude,
-                userCoords.longitude,
-                TUMULO_GPS.latitude,
-                TUMULO_GPS.longitude
-            );
-
-            updateDistanceDisplay(distance);
-            updateNavigationText(`Distância: ${distance.toFixed(1)} metros`);
-
-            // Lógica de proximidade
-            if (distance < 5 && !arPositionState.initialized) {
-                initARScene();
-            } else if (distance > 10) {
-                updateNavigationText(`Siga a seta por ${distance.toFixed(0)} metros`);
-            }
-        }
-
-        function initARScene() {
-            // Tentar reconhecimento visual primeiro
-            tryVisualRecognition()
-                .then(success => {
-                    if (success) {
-                        showARExperience();
-                    } else {
-                        activateManualCalibration();
-                    }
-                })
-                .catch(error => {
-                    console.error("Erro no reconhecimento visual:", error);
-                    activateManualCalibration();
-                });
-        }
-
-        async function tryVisualRecognition() {
-            // Implementação simplificada
-            return new Promise((resolve) => {
-                // Simula processamento
-                setTimeout(() => {
-                    // 70% de chance de sucesso
-                    resolve(Math.random() > 0.3);
-                }, 2000);
-            });
-        }
-
-        function activateManualCalibration() {
-            document.getElementById('manualCalibration').style.display = 'block';
-            updateNavigationText("Use os controles para alinhar os elementos virtuais");
-
-            // Configurar listeners dos botões
-            document.querySelectorAll('.calibration-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const axis = this.dataset.axis;
-                    const dir = this.dataset.dir === '+' ? 1 : -1;
-                    adjustARPosition(axis, dir * 0.1);
-                });
-            });
-
-            document.getElementById('confirmCalibration').addEventListener('click', () => {
-                saveCalibration();
-                showARExperience();
-            });
-        }
-
-        function showARExperience() {
-            // Esconder navegação
-            document.getElementById('arNavigation').style.display = 'none';
-            
-            // Mostrar cena AR tradicional
-            document.getElementById('arContainer').style.display = 'block';
-            
-            // Iniciar experiência AR
-            initTraditionalARScene();
-        }
-
-        // Funções auxiliares
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            // Implementação simplificada
-            return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2)) * 111000;
-        }
-
-        function updateDistanceDisplay(distance) {
-            document.getElementById('distanceDisplay').textContent = `${distance.toFixed(1)}m`;
-        }
-
-        function updateNavigationText(text) {
-            document.getElementById('navigationText').textContent = text;
-        }
-
-        function handleOrientation(event) {
-            if (event.alpha) {
-                const arrow = document.getElementById('compassArrow');
-                arrow.style.transform = `translateX(-50%) rotate(${event.alpha}deg)`;
-            }
-        }
-
-        function handlePositionError(error) {
-            console.error('Erro de geolocalização:', error);
-            updateNavigationText('Erro ao obter localização. Verifique as permissões do GPS.');
-        }
-
-        function initTraditionalARScene() {
-            // Inicializar a cena AR tradicional
-            arActive = true;
-
-            // Aplicar calibração manual se existir
-            if (arPositionState.initialized) {
-                const lapide = document.getElementById('lapide');
-                if (lapide) {
-                    const cal = arPositionState.calibration;
-                    lapide.setAttribute('position', {
-                        x: cal.x,
-                        y: 0,
-                        z: cal.z
-                    });
-                    lapide.setAttribute('scale', `${cal.scale} ${cal.scale} ${cal.scale}`);
-                }
-            }
-        }
-
-        function adjustARPosition(axis, value) {
-            const lapide = document.getElementById('lapide');
-            if (!lapide) return;
-
-            const pos = lapide.getAttribute('position');
-            const newPos = { ...pos };
-
-            if (axis === 'x') newPos.x += value;
-            if (axis === 'z') newPos.z += value;
-
-            lapide.setAttribute('position', newPos);
-        }
-
-        function saveCalibration() {
-            const lapide = document.getElementById('lapide');
-            if (lapide) {
-                const pos = lapide.getAttribute('position');
-                arPositionState.calibration = {
-                    x: pos.x,
-                    z: pos.z,
-                    scale: 1 // Mantenha simples para demonstração
-                };
-                arPositionState.initialized = true;
-            }
-        }
-
-        // ===== FIM DO NOVO SISTEMA =====
-
-        // Função para parar AR
-        function stopAR() {
-            const arContainer = document.getElementById('arContainer');
-            const arNavigation = document.getElementById('arNavigation');
-            
-            arContainer.style.display = 'none';
-            arNavigation.style.display = 'none';
-            arActive = false;
-            
-            // Parar todas as streams de vídeo
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(stream => {
-                        stream.getTracks().forEach(track => track.stop());
-                    })
-                    .catch(() => {});
-            }
-        }
-
-        // Efeitos de scroll
-        function handleScroll() {
-            const header = document.getElementById('header');
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            // Header scroll effect
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-            
-            // Fade in elements
-            fadeElements.forEach(element => {
-                const elementTop = element.offsetTop;
-                const elementHeight = element.offsetHeight;
-                const windowHeight = window.innerHeight;
-                const scrollTop = window.scrollY;
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
                 
-                if (scrollTop > elementTop - windowHeight + elementHeight / 3) {
-                    element.classList.add('visible');
-                }
-            });
+                // Posição e tamanho aleatórios
+                const size = Math.random() * 4 + 1;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 10 + 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
         }
-
-        // Event listeners
+        
+        // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Scroll effects
-            window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Initial call
+            createParticles();
             
-            // AR Button click event
-            document.querySelector('.btn-ar').addEventListener('click', function() {
-                // Iniciar novo sistema AR
-                startAR();
-                
-                // Opcional: guia inicial
-                setTimeout(() => {
-                    alert("Siga as instruções na parte inferior da tela. " +
-                          "O sistema irá guiá-lo até o túmulo e ativar a experiência AR automaticamente.");
-                }, 500);
-            });
-            
-            // Smooth scroll para links internos
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    
-                    // Se for o link da AR, chama a função startAR
-                    if (targetId === '#ar') {
-                        startAR();
-                        return;
-                    }
-
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        const headerHeight = document.getElementById('header').offsetHeight;
-                        const targetPosition = target.offsetTop - headerHeight - 20;
-                        
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
+            // Aplicar animações após carregamento
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    el.style.opacity = '1';
                 });
-            });
-            
-            // Mobile menu toggle
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navMenu = document.querySelector('.nav-menu');
-            
-            if (mobileToggle && navMenu) {
-                mobileToggle.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                    // Adicionar estilo para o menu ativo se necessário
-                    if (navMenu.classList.contains('active')) {
-                        navMenu.style.display = 'flex';
-                        navMenu.style.flexDirection = 'column';
-                        navMenu.style.position = 'absolute';
-                        navMenu.style.top = document.getElementById('header').offsetHeight + 'px';
-                        navMenu.style.left = '0';
-                        navMenu.style.right = '0';
-                        navMenu.style.background = 'rgba(10, 10, 10, 0.98)';
-                        navMenu.style.padding = '20px';
-                        navMenu.style.textAlign = 'center';
-                    } else {
-                        navMenu.style.display = ''; // Reverte para o estilo original
-                    }
-                });
-            }
-        });
-
-        // Prevenir zoom no iOS
-        document.addEventListener('gesturestart', function (e) {
-            e.preventDefault();
-        });
-
-        // Adicionar efeitos de hover para cards
-        document.querySelectorAll('.momento-card, .depoimento-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
+            }, 300);
         });
     </script>
 </body>
 </html>
-
