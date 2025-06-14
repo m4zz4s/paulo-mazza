@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcador AR - Memorial Paulo Mazza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Great Vibes', cursive;
+            color: #c5a47f;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(197, 164, 127, 0.3);
+        }
+
+        .header .subtitle {
+            font-family: 'Cinzel', serif;
+            color: rgba(224, 224, 224, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            background: rgba(197, 164, 127, 0.1);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            border-left: 4px solid #c5a47f;
+            backdrop-filter: blur(5px);
+        }
+        
+        .instructions h3 {
+            font-family: 'Cinzel', serif;
+            color: #c5a47f;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ol {
+            line-height: 2;
+            font-size: 1.1rem;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            color: rgba(224, 224, 224, 0.9);
+        }
+
+        .instructions strong {
+            color: #c5a47f;
+        }
+        
+        .marker-container {
+            background: white;
+            padding: 50px;
+            margin: 40px 0;
+            border: 3px solid #c5a47f;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(197, 164, 127, 0.2);
+            position: relative;
+        }
+
+        .marker-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #c5a47f, #d4af37, #c5a47f);
+            border-radius: 15px;
+            z-index: -1;
+        }
+        
+        .marker {
+            width: 250px;
+            height: 250px;
+            border: 10px solid black;
+            background: white;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .marker-pattern {
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, black 25%, transparent 25%), 
+                linear-gradient(-45deg, black 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, black 75%), 
+                linear-gradient(-45deg, transparent 75%, black 75%);
+            background-size: 50px 50px;
+            background-position: 0 0, 0 25px, 25px -25px, -25px 0px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(197, 164, 127, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(197, 164, 127, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #c5a47f;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-family: 'Cinzel', serif;
+            color: #c5a47f;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            color: rgba(224, 224, 224, 0.8);
+            line-height: 1.6;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #c5a47f, #d4af37);
+            color: #1a1a1a;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(197, 164, 127, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(197, 164, 127, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(197, 164, 127, 0.2);
+            color: #c5a47f;
+            border: 2px solid #c5a47f;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(197, 164, 127, 0.3);
+        }
+
+        .tip {
+            background: rgba(197, 164, 127, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            text-align: center;
+        }
+
+        .tip-icon {
+            color: #c5a47f;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .tip-text {
+            color: rgba(224, 224, 224, 0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                color: black;
+            }
+            .container { 
+                box-shadow: none; 
+                background: white;
+                border: none;
+            }
+            .instructions, .features, .buttons, .tip { 
+                display: none; 
+            }
+            .marker-container { 
+                border: 3px solid black; 
+                background: white;
+            }
+            .marker-container::before {
+                display: none;
+            }
+            .header h1 {
+                color: black;
+                text-shadow: none;
+            }
+            .header .subtitle {
+                color: black;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .marker {
+                width: 200px;
+                height: 200px;
+            }
+
+            .marker-pattern {
+                background-size: 40px 40px;
+                background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+            }
+
+            .instructions {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Animações */
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .marker-container {
+            animation: markerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes markerGlow {
+            0% { box-shadow: 0 10px 30px rgba(197, 164, 127, 0.2); }
+            100% { box-shadow: 0 15px 40px rgba(197, 164, 127, 0.4); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <h1>🏛️ Marcador AR</h1>
+            <p class="subtitle">Memorial Paulo Mazza</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>
+                <i class="fas fa-list-ol"></i>
+                Como usar o Marcador AR
+            </h3>
+            <ol>
+                <li><strong>Imprima esta página</strong> - Clique no botão "Imprimir Marcador" abaixo</li>
+                <li><strong>Recorte o marcador</strong> - Corte ao redor da borda preta do quadrado</li>
+                <li><strong>Coloque em superfície plana</strong> - Posicione o marcador em uma mesa ou superfície lisa</li>
+                <li><strong>Abra o memorial no celular</strong> - Acesse o memorial e clique em "Experiência 3D"</li>
+                <li><strong>Aponte a câmera</strong> - Direcione a câmera do celular para o marcador impresso</li>
+                <li><strong>Explore o memorial 3D</strong> - Mova o celular ao redor para ver diferentes ângulos</li>
+            </ol>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-candle-holder"></i>
+                </div>
+                <h4 class="feature-title">Velas Interativas</h4>
+                <p class="feature-description">
+                    Toque nas velas para acendê-las e criar um ambiente solene e respeitoso
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h4 class="feature-title">Rosas que Caem</h4>
+                <p class="feature-description">
+                    Toque nas rosas para fazê-las cair suavemente sobre a lápide memorial
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <h4 class="feature-title">Galeria de Fotos</h4>
+                <p class="feature-description">
+                    Interaja com as fotos em 3D para ver momentos especiais da vida de Paulo
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sparkles"></i>
+                </div>
+                <h4 class="feature-title">Partículas Douradas</h4>
+                <p class="feature-description">
+                    Observe as partículas douradas flutuando, simbolizando a eternidade
+                </p>
+            </div>
+        </div>
+        
+        <div class="marker-container">
+            <div class="marker">
+                <div class="marker-pattern"></div>
+            </div>
+        </div>
+
+        <div class="tip">
+            <i class="fas fa-lightbulb tip-icon"></i>
+            <span class="tip-text">
+                <strong>Dica Importante:</strong> Para melhor resultado, imprima em papel branco de boa qualidade e mantenha boa iluminação no ambiente. Evite superfícies reflexivas ou com sombras.
+            </span>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                Imprimir Marcador
+            </button>
+            
+            <a href="memorial.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao Memorial
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Adicionar efeitos de interação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efeito de hover nas feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Efeito de clique no marcador
+            const marker = document.querySelector('.marker');
+            marker.addEventListener('click', function() {
+                this.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+
+            // Animação de entrada dos elementos
+            const elements = document.querySelectorAll('.feature-card, .instructions, .tip');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Prevenir zoom no iOS
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
+
