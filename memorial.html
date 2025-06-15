@@ -889,6 +889,51 @@
                 display: none;
             }
         }
+
+        /* Ajustes para o layout do memorial */
+        .hero-section {
+            min-height: auto; /* Remover altura fixa */
+            padding: 100px 0 50px; /* Mais espaço vertical */
+        }
+
+        .profile-photo {
+            width: 150px; /* Reduzir tamanho da foto */
+            height: 150px;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            margin: 30px 0; /* Reduzir margem */
+        }
+
+        .content-section {
+            padding: 60px 0; /* Reduzir padding das seções */
+        }
+
+        #depoimentos {
+            padding-bottom: 100px; /* Espaço extra para depoimentos */
+        }
+
+        /* Ajuste de prioridade para garantir que os elementos apareçam */
+        #biografia { z-index: 2; position: relative; }
+        #momentos { z-index: 3; position: relative; }
+        #depoimentos { z-index: 4; position: relative; }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding-top: 80px;
+            }
+            
+            .hero-name {
+                font-size: 2.2rem;
+            }
+            
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -909,16 +954,13 @@
     <header class="header" id="header">
         <div class="nav-container">
             <a href="#" class="logo">Memorial Paulo Mazza</a>
-            <a href="index.html" class="ver-outros">
-                <i class="fas fa-users"></i> Ver outros
-            </a>
-            <nav>
+           <nav>
                 <ul class="nav-menu">
                     <li><a href="#biografia">Biografia</a></li>
                     <li><a href="#momentos">Momentos</a></li>
                     <li><a href="#depoimentos">Depoimentos</a></li>
                     <li><a href="#ar" onclick="startAR()">Experiência 3D</a></li>
-                    <li class="ver-outros-mobile"><a href="index.html" class="btn"><i class="fas fa-users"></i> Ver outros membros</a></li>
+                    <li><a href="index.html">Ver outros</a></li>
                 </ul>
                 <button class="mobile-menu-toggle">
                     <i class="fas fa-bars"></i>
@@ -1713,7 +1755,7 @@ Sempre em nossos corações."
             if (mobileToggle && navMenu) {
                 mobileToggle.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
-                    // Adicionar estilo para o menu ativo se necessário
+                    
                     if (navMenu.classList.contains('active')) {
                         navMenu.style.display = 'flex';
                         navMenu.style.flexDirection = 'column';
@@ -1724,8 +1766,9 @@ Sempre em nossos corações."
                         navMenu.style.background = 'rgba(10, 10, 10, 0.98)';
                         navMenu.style.padding = '20px';
                         navMenu.style.textAlign = 'center';
+                        navMenu.style.zIndex = '1000'; /* Garantir que fique acima de tudo */
                     } else {
-                        navMenu.style.display = ''; // Reverte para o estilo original
+                        navMenu.style.display = 'none';
                     }
                 });
             }
