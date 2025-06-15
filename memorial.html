@@ -831,6 +831,64 @@
             font-family: 'Cinzel';
             src: url('fonts/Cinzel-Regular.ttf') format('truetype');
         }
+
+        /* Estilo para o botão "Ver outros" */
+        .ver-outros {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(197, 164, 127, 0.2);
+            color: #c5a47f;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(197, 164, 127, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .ver-outros:hover {
+            background: rgba(197, 164, 127, 0.3);
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 0 15px rgba(197, 164, 127, 0.2);
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 768px) {
+            .ver-outros {
+                position: static;
+                transform: none;
+                margin-left: auto;
+                margin-right: 15px;
+                padding: 8px 15px;
+            }
+            
+            .nav-container {
+                position: relative;
+            }
+        }
+
+        /* Adicionar ao menu mobile */
+        .nav-menu .ver-outros-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu .ver-outros-mobile {
+                display: flex;
+                justify-content: center;
+                padding: 15px 0;
+            }
+            
+            .ver-outros.desktop {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -851,12 +909,16 @@
     <header class="header" id="header">
         <div class="nav-container">
             <a href="#" class="logo">Memorial Paulo Mazza</a>
+            <a href="index.html" class="ver-outros">
+                <i class="fas fa-users"></i> Ver outros
+            </a>
             <nav>
                 <ul class="nav-menu">
                     <li><a href="#biografia">Biografia</a></li>
                     <li><a href="#momentos">Momentos</a></li>
                     <li><a href="#depoimentos">Depoimentos</a></li>
                     <li><a href="#ar" onclick="startAR()">Experiência 3D</a></li>
+                    <li class="ver-outros-mobile"><a href="index.html" class="btn"><i class="fas fa-users"></i> Ver outros membros</a></li>
                 </ul>
                 <button class="mobile-menu-toggle">
                     <i class="fas fa-bars"></i>
