@@ -934,6 +934,64 @@
                 height: 120px;
             }
         }
+
+        /* Estilos para o Modal/Lightbox */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1200px;
+            max-height: 80vh;
+            animation: zoom 0.6s;
+        }
+
+        @keyframes zoom {
+            from {transform: scale(0.8); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
+        }
+
+        #modalCaption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1200px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            color: #f1f1f1;
+            font-size: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 2001;
+            cursor: pointer;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #c5a47f;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -1438,6 +1496,13 @@ Sempre em nossos corações."
         </a-scene>
     </div>
 
+    <!-- Modal Lightbox -->
+    <div id="imageModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div id="modalCaption"></div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -1446,12 +1511,7 @@ Sempre em nossos corações."
                 Este memorial foi criado com amor para celebrar a vida e o legado de Paulo Mazza. 
                 Suas memórias continuarão vivas em todos nós que tivemos o privilégio de conhecê-lo.
             </p>
-            <div class="footer-links">
-                <a href="#biografia">Biografia</a>
-                <a href="#momentos">Momentos</a>
-                <a href="#depoimentos">Depoimentos</a>
-                <a href="marcador.html">Marcador AR</a>
-            </div>
+            
             <p class="copyright">
                 © 2025 ONStars.memoriais/EternizeQrCode
             </p>
@@ -1788,6 +1848,39 @@ Sempre em nossos corações."
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
+        });
+
+        // Lightbox para Momentos Especiais
+        document.querySelectorAll('.momento-image').forEach(img => {
+            img.addEventListener('click', function() {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById("modalImage");
+                const captionText = document.getElementById("modalCaption");
+                
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                
+                // Obter o título e descrição da imagem
+                const card = this.closest('.momento-card');
+                const title = card.querySelector('.momento-title').textContent;
+                const description = card.querySelector('.momento-description').textContent;
+                const date = card.querySelector('.momento-date').textContent;
+                
+                captionText.innerHTML = `<h3>${title}</h3><p>${description}</p><p><em>${date}</em></p>`;
+            });
+        });
+
+        // Fechar modal
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('imageModal').style.display = "none";
+        });
+
+        // Fechar ao clicar fora da imagem
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
         });
     </script>
 </body>
