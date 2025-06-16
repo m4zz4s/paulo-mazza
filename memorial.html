@@ -1144,6 +1144,25 @@
             border: 2px solid #c5a47f;
             margin-top: 20px;
         }
+
+        /* Estilos para o botão AR */
+        .ar-btn {
+            background: rgba(197, 164, 127, 0.2);
+            border: 2px solid #c5a47f;
+            color: #c5a47f;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .ar-btn:hover {
+            background: rgba(197, 164, 127, 0.3);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -1611,9 +1630,8 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
         // Variáveis globais
         let arActive = false;
         let isCalibrating = false;
-        let touchStartDistance = 0;
-        let touchStartScale = 1;
-        let touchStartPosition = { x: 0, z: 0 };
+        let memorialPlaced = false;
+        let flowerCount = 0;
         
         const calibrationData = {
             position: { x: 0, y: 0, z: -2 },
@@ -1621,174 +1639,146 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             rotation: 0
         };
     
-        // ===== SISTEMA DE CALIBRAÇÃO SIMPLIFICADO =====
+        // ===== SISTEMA AR SEM MARCADORES PARA CEMITÉRIOS =====
         function startAR() {
             const arContainer = document.getElementById('arContainer');
             const calibrationOverlay = document.getElementById('calibrationOverlay');
+            const arLoading = document.getElementById('arLoading');
             
             arContainer.style.display = 'block';
+            arLoading.style.display = 'block';
             calibrationOverlay.style.display = 'flex';
             
-            // Desativar controles de órbita durante a calibração
-            const camera = document.querySelector('[orbit-controls]');
-            if (camera) camera.setAttribute('orbit-controls', 'enabled', false);
-            
             isCalibrating = true;
-            initCalibration();
+            memorialPlaced = false;
+            flowerCount = 0;
+            
+            // Configurar cena AR
+            setTimeout(() => {
+                arLoading.style.display = 'none';
+                document.getElementById('calibrationText').textContent = 
+                    "Aponte a câmera para a lápide e toque na tela onde deseja posicionar o memorial";
+            }, 2000);
         }
     
-        function initCalibration() {
-            const scene = document.getElementById('arScene');
-            const memorialGroup = document.getElementById('memorialGroup');
-            
-            // Resetar posição
-            calibrationData.position = { x: 0, y: 0, z: -2 };
-            calibrationData.scale = 1;
-            calibrationData.rotation = 0;
-            
-            memorialGroup.setAttribute('visible', 'false');
-            updateMemorialPosition();
-            
-            // Eventos de toque/click
-            scene.addEventListener('click', handleCalibrationTap);
-            scene.addEventListener('touchstart', handleTouchStart, { passive: false });
-            
-            document.getElementById('calibrationText').textContent = 
-                "Aponte a câmera para uma superfície plana e toque para posicionar";
-        }
-    
+        // Função simplificada de posicionamento
         function handleCalibrationTap(event) {
-            if (!isCalibrating) return;
+            if (!isCalibrating || memorialPlaced) return;
             
             const sceneEl = document.querySelector('a-scene');
             if (!sceneEl || !sceneEl.camera) return;
             
-            const camera = sceneEl.camera;
-            const canvas = sceneEl.canvas;
-            const rect = canvas.getBoundingClientRect();
+            // Obter a posição da câmera
+            const cameraPos = sceneEl.camera.el.getAttribute('position');
             
-            // Calcular coordenadas normalizadas
-            const clientX = event.clientX || event.touches[0].clientX;
-            const clientY = event.clientY || event.touches[0].clientY;
-            
-            const x = ((clientX - rect.left) / rect.width) * 2 - 1;
-            const y = -((clientY - rect.top) / rect.height) * 2 + 1;
-            
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-            
-            // Direcionar raio para frente (simplificado)
-            const direction = new THREE.Vector3(0, 0, -1);
-            direction.applyQuaternion(camera.quaternion);
-            
-            // Calcular ponto de interseção a 2 metros de distância
-            const distance = 2;
-            const position = new THREE.Vector3();
-            position.copy(raycaster.ray.origin).add(direction.multiplyScalar(distance));
-            
+            // Posicionar memorial 2 metros à frente da câmera
             calibrationData.position = {
-                x: position.x,
+                x: cameraPos.x,
                 y: 0,
-                z: position.z
+                z: cameraPos.z - 2
             };
             
             updateMemorialPosition();
             document.getElementById('memorialGroup').setAttribute('visible', 'true');
+            memorialPlaced = true;
+            
+            // Configurar experiência 360°
+            setup360Experience();
+            
             document.getElementById('calibrationText').textContent = 
-                "Memorial posicionado! Arraste para mover, pinça para escalar.";
+                "Memorial posicionado! Toque nas velas para acendê-las";
             document.getElementById('calibrationComplete').style.display = 'block';
         }
     
-        function handleTouchStart(event) {
-            if (!isCalibrating || event.touches.length < 1) return;
-            event.preventDefault();
+        // Configurar experiência 360°
+        function setup360Experience() {
+            const scene = document.getElementById('arScene');
+            const camera = scene.querySelector('[camera]');
+            
+            // Adicionar controles de órbita para visualização 360°
+            camera.setAttribute('orbit-controls', {
+                target: "0 1 0",
+                enableDamping: true,
+                dampingFactor: 0.25,
+                rotateSpeed: 0.5,
+                minDistance: 1,
+                maxDistance: 5,
+                initialPosition: "0 1.6 3"
+            });
+            
+            // Ativar interações
+            setupInteractions();
+        }
+    
+        // Configurar interações (velas, flores)
+        function setupInteractions() {
+            // Acender velas
+            document.querySelectorAll('.candle').forEach(candle => {
+                candle.addEventListener('click', function() {
+                    const flame = this.querySelector('.flame');
+                    const light = flame.querySelector('[light]');
+                    const isLit = light.getAttribute('intensity') > 0;
+                    
+                    if (isLit) {
+                        light.setAttribute('intensity', 0);
+                        flame.setAttribute('animation', 'enabled', 'false');
+                    } else {
+                        light.setAttribute('intensity', 2);
+                        flame.setAttribute('animation', 'enabled', 'true');
+                    }
+                });
+            });
+            
+            // Adicionar botão de flor se ainda não existir
+            if (!document.getElementById('flowerBtn')) {
+                const flowerBtn = document.createElement('button');
+                flowerBtn.id = 'flowerBtn';
+                flowerBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Flor';
+                flowerBtn.className = 'ar-btn';
+                flowerBtn.style.position = 'absolute';
+                flowerBtn.style.bottom = '100px';
+                flowerBtn.style.left = '50%';
+                flowerBtn.style.transform = 'translateX(-50%)';
+                flowerBtn.style.zIndex = '1001';
+                flowerBtn.onclick = addFlower;
+                
+                document.getElementById('arContainer').appendChild(flowerBtn);
+            }
+        }
+    
+        // Adicionar flor interativa
+        function addFlower() {
+            if (flowerCount >= 3) {
+                alert('Máximo de 3 flores alcançado');
+                return;
+            }
             
             const scene = document.getElementById('arScene');
+            const flower = document.createElement('a-entity');
             
-            if (event.touches.length === 1) {
-                touchStartPosition = {
-                    x: calibrationData.position.x,
-                    z: calibrationData.position.z
-                };
-                scene.addEventListener('touchmove', handleTouchMove);
-                scene.addEventListener('touchend', handleTouchEnd);
-            }
-            else if (event.touches.length === 2) {
-                touchStartDistance = Math.hypot(
-                    event.touches[0].clientX - event.touches[1].clientX,
-                    event.touches[0].clientY - event.touches[1].clientY
-                );
-                touchStartScale = calibrationData.scale;
-                scene.addEventListener('touchmove', handlePinchMove);
-                scene.addEventListener('touchend', handlePinchEnd);
-            }
-        }
-    
-        function handleTouchMove(event) {
-            if (event.touches.length !== 1) return;
+            flower.setAttribute('gltf-model', 'https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/rose.glb?v=1670000000000');
+            flower.setAttribute('scale', '0.3 0.3 0.3');
+            flower.setAttribute('position', {
+                x: -0.3 + (flowerCount * 0.3),
+                y: 0.1,
+                z: -0.5
+            });
+            flower.setAttribute('animation', 'property: rotation; to: 0 360 0; dur: 10000; loop: true');
+            flower.setAttribute('class', 'clickable');
             
-            const rect = event.target.getBoundingClientRect();
-            const touch = event.touches[0];
-            
-            const x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
-            const y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
-            
-            calibrationData.position.x = touchStartPosition.x + (x * 0.5);
-            calibrationData.position.z = touchStartPosition.z + (y * 0.5);
-            updateMemorialPosition();
-        }
-    
-        function handlePinchMove(event) {
-            if (event.touches.length !== 2) return;
-            
-            const dx = event.touches[0].clientX - event.touches[1].clientX;
-            const dy = event.touches[0].clientY - event.touches[1].clientY;
-            const currentDistance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (touchStartDistance > 0) {
-                calibrationData.scale = Math.max(0.3, Math.min(3, 
-                    touchStartScale * (currentDistance / touchStartDistance)
-                ));
-            }
-            updateMemorialPosition();
-        }
-    
-        function handleTouchEnd() {
-            const scene = document.getElementById('arScene');
-            scene.removeEventListener('touchmove', handleTouchMove);
-            scene.removeEventListener('touchend', handleTouchEnd);
-        }
-    
-        function handlePinchEnd() {
-            const scene = document.getElementById('arScene');
-            scene.removeEventListener('touchmove', handlePinchMove);
-            scene.removeEventListener('touchend', handlePinchEnd);
+            scene.querySelector('#memorialGroup').appendChild(flower);
+            flowerCount++;
         }
     
         function updateMemorialPosition() {
             const memorialGroup = document.getElementById('memorialGroup');
-            
-            memorialGroup.setAttribute('position', {
-                x: calibrationData.position.x,
-                y: calibrationData.position.y,
-                z: calibrationData.position.z
-            });
-            
-            memorialGroup.setAttribute('scale', {
-                x: calibrationData.scale,
-                y: calibrationData.scale,
-                z: calibrationData.scale
-            });
+            memorialGroup.setAttribute('position', calibrationData.position);
         }
     
         function hideCalibration() {
             isCalibrating = false;
             document.getElementById('calibrationOverlay').style.display = 'none';
-            document.getElementById('arInfo').textContent = "Mova o dispositivo para explorar o memorial";
-            
-            // Reativar controles de órbita
-            const camera = document.querySelector('[orbit-controls]');
-            if (camera) camera.setAttribute('orbit-controls', 'enabled', true);
+            document.getElementById('arInfo').textContent = "Mova o dispositivo para ver o memorial em 360°";
         }
     
         function stopAR() {
@@ -1798,10 +1788,22 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             arContainer.style.display = 'none';
             arActive = false;
             isCalibrating = false;
+            memorialPlaced = false;
             
-            // Remover event listeners
-            scene.removeEventListener('click', handleCalibrationTap);
-            scene.removeEventListener('touchstart', handleTouchStart);
+            // Remover controles de órbita
+            const camera = scene.querySelector('[camera]');
+            if (camera.hasAttribute('orbit-controls')) {
+                camera.removeAttribute('orbit-controls');
+            }
+            
+            // Remover botão de flor
+            const flowerBtn = document.getElementById('flowerBtn');
+            if (flowerBtn) flowerBtn.remove();
+            
+            // Remover flores
+            document.querySelectorAll('#memorialGroup [gltf-model]').forEach(flower => {
+                flower.remove();
+            });
             
             // Parar câmera
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -1843,9 +1845,7 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             handleScroll(); // Initial call
     
             // AR Button click event
-            document.querySelector('.btn-ar').addEventListener('click', function () {
-                startAR();
-            });
+            document.querySelector('.btn-ar').addEventListener('click', startAR);
     
             // Smooth scroll para links internos
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1878,9 +1878,9 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
     
             if (mobileToggle && navMenu) {
                 mobileToggle.addEventListener('click', function () {
-                    navMenu.classList.toggle('active');
-    
-                    if (navMenu.classList.contains('active')) {
+                    const isActive = navMenu.classList.toggle('active');
+                    
+                    if (isActive) {
                         navMenu.style.display = 'flex';
                         navMenu.style.flexDirection = 'column';
                         navMenu.style.position = 'absolute';
@@ -1896,6 +1896,15 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
                     }
                 });
             }
+            
+            // Eventos AR
+            const scene = document.getElementById('arScene');
+            scene.addEventListener('click', handleCalibrationTap);
+            scene.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    handleCalibrationTap(e.touches[0]);
+                }
+            }, { passive: true });
         });
     
         // Prevenir zoom no iOS
@@ -1907,10 +1916,12 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
         document.querySelectorAll('.momento-card, .depoimento-card').forEach(card => {
             card.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateY(-10px) scale(1.02)';
+                this.style.boxShadow = '0 20px 60px rgba(197, 164, 127, 0.3)';
             });
     
             card.addEventListener('mouseleave', function () {
                 this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '';
             });
         });
     
