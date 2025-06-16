@@ -1621,7 +1621,7 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             rotation: 0
         };
     
-        // ===== SISTEMA DE CALIBRAÇÃO INSTANTÂNEA =====
+        // ===== SISTEMA DE CALIBRAÇÃO SIMPLIFICADO =====
         function startAR() {
             const arContainer = document.getElementById('arContainer');
             const calibrationOverlay = document.getElementById('calibrationOverlay');
@@ -1629,7 +1629,7 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             arContainer.style.display = 'block';
             calibrationOverlay.style.display = 'flex';
             
-            // Desativar controles de órbita
+            // Desativar controles de órbita durante a calibração
             const camera = document.querySelector('[orbit-controls]');
             if (camera) camera.setAttribute('orbit-controls', 'enabled', false);
             
@@ -1668,28 +1668,35 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             const rect = canvas.getBoundingClientRect();
             
             // Calcular coordenadas normalizadas
-            const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            const clientX = event.clientX || event.touches[0].clientX;
+            const clientY = event.clientY || event.touches[0].clientY;
+            
+            const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            const y = -((clientY - rect.top) / rect.height) * 2 + 1;
             
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
             
-            const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-            const intersection = new THREE.Vector3();
+            // Direcionar raio para frente (simplificado)
+            const direction = new THREE.Vector3(0, 0, -1);
+            direction.applyQuaternion(camera.quaternion);
             
-            if (raycaster.ray.intersectPlane(plane, intersection)) {
-                calibrationData.position = {
-                    x: intersection.x,
-                    y: 0,
-                    z: intersection.z
-                };
-                
-                updateMemorialPosition();
-                document.getElementById('memorialGroup').setAttribute('visible', 'true');
-                document.getElementById('calibrationText').textContent = 
-                    "Memorial posicionado! Arraste para mover, pinça para escalar.";
-                document.getElementById('calibrationComplete').style.display = 'block';
-            }
+            // Calcular ponto de interseção a 2 metros de distância
+            const distance = 2;
+            const position = new THREE.Vector3();
+            position.copy(raycaster.ray.origin).add(direction.multiplyScalar(distance));
+            
+            calibrationData.position = {
+                x: position.x,
+                y: 0,
+                z: position.z
+            };
+            
+            updateMemorialPosition();
+            document.getElementById('memorialGroup').setAttribute('visible', 'true');
+            document.getElementById('calibrationText').textContent = 
+                "Memorial posicionado! Arraste para mover, pinça para escalar.";
+            document.getElementById('calibrationComplete').style.display = 'block';
         }
     
         function handleTouchStart(event) {
