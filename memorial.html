@@ -2228,6 +2228,7 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
         document.addEventListener('DOMContentLoaded', function() {
             // Configurar scroll
             window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Chamar imediatamente para mostrar seções
             
             // Configurar lightbox
             setupLightbox();
@@ -2243,6 +2244,16 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             } else {
                 header.classList.remove('scrolled');
             }
+
+            // Animações de fade-in
+            document.querySelectorAll('.fade-in').forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
         }
 
         function setupLightbox() {
