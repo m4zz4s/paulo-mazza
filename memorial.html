@@ -2053,8 +2053,39 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
             active: false
         };
 
-        // Iniciar AR
+        // Verificação de compatibilidade AR
+        function checkARCompatibility() {
+            const warnings = [];
+            
+            // Verificar GPU
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (!gl) {
+                warnings.push("Seu dispositivo não suporta WebGL (gráficos 3D necessários)");
+            }
+
+            // Verificar memória
+            if (navigator.deviceMemory && navigator.deviceMemory < 2) {
+                warnings.push("Dispositivo com memória limitada (<2GB)");
+            }
+
+            // Verificar WebXR
+            if (!navigator.xr) {
+                warnings.push("Navegador não suporta WebXR (necessário para AR)");
+            }
+
+            return warnings;
+        }
+
+        // Modifique sua função startAR()
         function startAR() {
+            const compatibilityIssues = checkARCompatibility();
+            
+            if (compatibilityIssues.length > 0) {
+                showFallbackExperience(compatibilityIssues);
+                return;
+            }
+            
             if (arState.active) return;
             
             const arContainer = document.getElementById('arContainer');
@@ -2276,7 +2307,28 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
                 if (e.target === modal) modal.style.display = 'none';
             });
         }
+
+        // Ajuste para exibir avisos no fallback
+        function showFallbackExperience(issues) {
+            const fallback = document.getElementById('ar-fallback');
+            const reasons = document.getElementById('fallback-reasons');
+            
+            reasons.innerHTML = issues.map(issue => 
+                `<p><i class="fas fa-exclamation-triangle"></i> ${issue}</p>`
+            ).join('');
+            
+            fallback.style.display = 'block';
+        }
     </script>
+
+    <div id="ar-fallback" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:2000; color:#fff; text-align:center; padding-top:100px;">
+        <h3 style="color:#c5a47f;">Experiência AR não disponível</h3>
+        <div id="fallback-reasons" style="margin:20px;"></div>
+        <button onclick="document.getElementById('ar-fallback').style.display='none'" 
+                style="background:#c5a47f; color:#000; border:none; padding:10px 20px; border-radius:20px; margin-top:20px;">
+            Fechar
+        </button>
+    </div>
 </body>
 
 </html>
