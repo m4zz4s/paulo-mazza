@@ -1163,6 +1163,337 @@
             background: rgba(197, 164, 127, 0.3);
             transform: scale(1.05);
         }
+
+        /* Estilo para os botões no menu de navegação */
+        .nav-menu button.nav-link {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: 400;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu button.nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #c5a47f;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu button.nav-link:hover {
+            color: #c5a47f;
+        }
+
+        .nav-menu button.nav-link:hover::after {
+            width: 100%;
+        }
+
+        .fallback-tree {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 70%;
+            background: #8B4513;
+            border-radius: 5px;
+        }
+
+        .tree-branches {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tree-phase {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #c5a47f;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: scale(1);
+            transition: transform 0.3s;
+        }
+
+        .tree-phase:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 10px #c5a47f;
+        }
+
+        /* Estilos para os pontos de fase da árvore */
+        .life-phase {
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Animações para feedback de calibração */
+        @keyframes calibrationRipple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+                border-width: 3px;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        @keyframes calibrationParticle {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+                scale: 1;
+            }
+            100% {
+                transform: translate(var(--endX), var(--endY));
+                opacity: 0;
+                scale: 0.3;
+            }
+        }
+
+        /* Melhorar transições do overlay de calibração */
+        .calibration-overlay {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Efeito de pulso melhorado para o alvo de calibração */
+        .calibration-target {
+            animation: pulse 2s infinite, glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(197, 164, 127, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(197, 164, 127, 0.3);
+            }
+        }
+
+        /* Animações para efeitos emocionais */
+        @keyframes floatHeart {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .heart-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff3366;
+            clip-path: path('M10,0 C15,0 20,5 20,10 C20,15 15,20 10,20 C5,20 0,15 0,10 C0,5 5,0 10,0 Z');
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Estilos para partículas de fallback */
+        .fallback-particle {
+            position: absolute;
+            background: #c5a47f;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatBg 8s ease-in-out infinite;
+        }
+
+        /* Avisos de performance */
+        .ar-performance-warning {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(255, 193, 7, 0.9);
+            color: #1a1a1a;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 10002;
+            backdrop-filter: blur(10px);
+        }
+
+        .simplify-btn {
+            position: fixed;
+            top: 120px;
+            left: 20px;
+            background: rgba(197, 164, 127, 0.9);
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 10002;
+            backdrop-filter: blur(10px);
+        }
+
+        .simplify-btn:hover {
+            background: rgba(197, 164, 127, 1);
+        }
+
+        /* Painel de permissão AR */
+        .ar-permission-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .permission-content {
+            background: rgba(26, 26, 26, 0.95);
+            border: 2px solid #c5a47f;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .permission-steps {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            gap: 20px;
+        }
+
+        .permission-step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: #c5a47f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .compatibility-warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* Experiência fallback */
+        .ar-fallback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .fallback-content {
+            background: rgba(26, 26, 26, 0.95);
+            border: 2px solid #c5a47f;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .fallback-model {
+            width: 300px;
+            height: 400px;
+            margin: 30px auto;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 15px;
+            border: 1px solid #c5a47f;
+            overflow: hidden;
+        }
+
+        .fallback-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .fallback-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .ar-performance-warning {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 193, 7, 0.9);
+            color: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Modo AR ativo */
+        .ar-mode {
+            overflow: hidden;
+        }
+
+        .ar-mode .memorial-container {
+            display: none;
+        }
     </style>
 </head>
 
@@ -1189,7 +1520,8 @@
                     <li><a href="#biografia">Biografia</a></li>
                     <li><a href="#momentos">Momentos</a></li>
                     <li><a href="#depoimentos">Depoimentos</a></li>
-                    <li><a href="#ar" onclick="startAR()">Experiência 3D</a></li>
+                    <!-- ALTERAÇÃO AQUI: substituir link por botão -->
+                    <li><button class="nav-link" onclick="startAR()">Experiência 3D</button></li>
                     <li><a href="index.html">Ver outros</a></li>
                 </ul>
                 <button class="mobile-menu-toggle">
@@ -1489,6 +1821,7 @@
             <a-assets>
                 <a-asset-item id="rose-model"
                     src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/rose.glb?v=1670000000000"></a-asset-item>
+                <a-asset-item id="tree-model" src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/tree_of_life.glb?v=1680000000000"></a-asset-item>
                 <img id="marble-texture"
                     src="https://cdn.glitch.global/c23afb41-da3b-4343-8780-3978362b2101/marble_texture.jpg?v=1670000000001">
                 <img id="candle-flame"
@@ -1496,6 +1829,7 @@
                 <img id="photo1" src="Fotos/perfil.jpg">
                 <img id="photo2" src="Fotos/ft1 (2).jpg">
                 <img id="photo3" src="Fotos/ft1 (3).jpg">
+                <img id="photo4" src="Fotos/ft1 (1).jpg">
             </a-assets>
             <!-- Iluminação -->
             <a-entity light="type: ambient; color: #BBB; intensity: 0.8"></a-entity>
@@ -1564,33 +1898,45 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
                     </a-plane>
 
                 </a-entity>
-                
+
 
                 <!-- Galeria de Fotos -->
-                <a-entity id="photo-gallery" position="0 0.8 -1.5" rotation="0 0 0">
-                    <a-image src="#photo1" width="0.8" height="0.6" position="-1 0 0" rotation="0 15 0"
-                        class="clickable"
-                        animation__spin="property: rotation; to: 0 375 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                        event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                        event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Formatura" align="center" color="#FFF" position="0 -0.4 0.01"
-                            width="1.5"></a-text>
-                    </a-image>
-                    <a-image src="#photo2" width="0.8" height="0.6" position="0 0 0" rotation="0 0 0" class="clickable"
-                        animation__spin="property: rotation; to: 0 360 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                        event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                        event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Casamento" align="center" color="#FFF" position="0 -0.4 0.01"
-                            width="1.5"></a-text>
-                    </a-image>
-                    <a-image src="#photo3" width="0.8" height="0.6" position="1 0 0" rotation="0 -15 0"
-                        class="clickable"
-                        animation__spin="property: rotation; to: 0 345 0; startEvents: click; dur: 1000; easing: easeInOutQuad"
-                        event-set__mouseenter="_event: mouseenter; scale: 1.1 1.1 1.1"
-                        event-set__mouseleave="_event: mouseleave; scale: 1 1 1">
-                        <a-text value="Nascimento do Filho" align="center" color="#FFF" position="0 -0.4 0.01"
-                            width="1.5"></a-text>
-                    </a-image>
+                <a-entity id="tree-of-life" position="0 1 -1.5" rotation="0 0 0" scale="0.8 0.8 0.8">
+                    <!-- Modelo 3D da árvore -->
+                    <a-entity gltf-model="#tree-model" scale="1.5 1.5 1.5"></a-entity>
+                    
+                    <!-- Pontos de interesse (fases da vida) -->
+                    <a-entity class="life-phase" phase="youth" position="0.3 2 -0.2">
+                        <a-ring color="#c5a47f" radius-inner="0.05" radius-outer="0.08"></a-ring>
+                        <a-entity 
+                            animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine"
+                            look-at="[camera]">
+                        </a-entity>
+                    </a-entity>
+                    
+                    <a-entity class="life-phase" phase="career" position="-0.4 1.8 0.3">
+                        <a-ring color="#c5a47f" radius-inner="0.05" radius-outer="0.08"></a-ring>
+                    </a-entity>
+                    
+                    <a-entity class="life-phase" phase="family" position="0.5 1.2 -0.4">
+                        <a-ring color="#c5a47f" radius-inner="0.05" radius-outer="0.08"></a-ring>
+                    </a-entity>
+                    
+                    <a-entity class="life-phase" phase="legacy" position="-0.2 0.8 0.5">
+                        <a-ring color="#c5a47f" radius-inner="0.05" radius-outer="0.08"></a-ring>
+                    </a-entity>
+                    
+                    <!-- Painel para exibir conteúdo -->
+                    <a-entity id="tree-content-panel" position="0 1.5 -1" visible="false">
+                        <a-plane color="#1a1a1a" opacity="0.9" width="1.2" height="0.8"></a-plane>
+                        <a-image id="tree-photo" width="0.8" height="0.5" position="0 0.1 0.01"></a-image>
+                        <a-text id="tree-title" value="" align="center" width="1.1" position="0 -0.3 0.01" color="#c5a47f"></a-text>
+                        <a-text id="tree-description" value="" align="center" width="1.1" position="0 -0.45 0.01" color="#e0e0e0" wrap-count="30"></a-text>
+                        <a-entity position="0.55 -0.35 0.01" class="clickable" event-set__click="_target: #tree-content-panel; visible: false">
+                            <a-ring color="#c5a47f" radius-inner="0.03" radius-outer="0.04"></a-ring>
+                            <a-text value="X" color="#c5a47f" align="center" position="0 0 0.01" width="0.2"></a-text>
+                        </a-entity>
+                    </a-entity>
                 </a-entity>
                 <!-- Partículas Douradas -->
                 <a-entity position="0 1.5 0"
@@ -1626,693 +1972,305 @@ Sempre em nossos corações." font="https://cdn.aframe.io/fonts/Roboto-msdf.json
         </div>
     </footer>
 
-    <script>
-        // ===== SISTEMA AR APRIMORADO SEM MARCADORES PARA CEMITÉRIOS =====
+    <!-- Painel de permissão AR -->
+    <div class="ar-permission-panel" id="permissionPanel">
+        <div class="permission-content">
+            <h2 style="color: #c5a47f; margin-bottom: 20px;">Preparando a Experiência Memorial</h2>
+            <p style="color: #e0e0e0; margin-bottom: 30px;">
+                Para honrar a memória de Paulo Mazza em realidade aumentada, precisamos da sua permissão para acessar a
+                câmera do dispositivo.
+            </p>
 
-        // Variáveis globais para controle de estado
-        let arState = {
-            isActive: false,
-            isCalibrating: false,
-            memorialPlaced: false,
-            flowerCount: 0,
-            cameraStream: null,
-            position: null,
-            permissionsGranted: false
+            <div class="permission-steps">
+                <div class="permission-step">
+                    <div class="step-icon">1</div>
+                    <p>Permita o acesso à câmera</p>
+                </div>
+                <div class="permission-step">
+                    <div class="step-icon">2</div>
+                    <p>Aponte para um espaço plano</p>
+                </div>
+                <div class="permission-step">
+                    <div class="step-icon">3</div>
+                    <p>Toque para posicionar o memorial</p>
+                </div>
+            </div>
+
+            <div class="compatibility-warning" id="compatibilityWarning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Seu dispositivo pode ter limitações de performance. A experiência será simplificada automaticamente
+                    se necessário.</p>
+            </div>
+
+            <button class="btn btn-ar" onclick="requestCameraAccess()" style="margin-top: 20px;">
+                <i class="fas fa-camera"></i> Permitir Acesso à Câmera
+            </button>
+
+            <button class="btn" onclick="cancelAR()" style="margin-top: 10px; background: transparent;">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+        </div>
+    </div>
+
+    <!-- Fallback para dispositivos não compatíveis -->
+    <div class="ar-fallback" id="arFallback">
+        <div class="fallback-content">
+            <h2 style="color: #c5a47f; margin-bottom: 20px;">Experiência Memorial Virtual</h2>
+            <p style="color: #e0e0e0; margin-bottom: 30px;">
+                Seu dispositivo não suporta realidade aumentada no momento, mas você ainda pode vivenciar uma versão
+                especial do memorial de Paulo Mazza.
+            </p>
+
+            <div class="fallback-model" id="fallbackModel">
+                <div class="fallback-particles" id="fallbackParticles"></div>
+                <div id="fallbackScene" style="width: 100%; height: 100%; position: relative;"></div>
+                <div class="ar-performance-warning" id="fallbackWarning">
+                    <i class="fas fa-info-circle"></i> Modo de compatibilidade ativado
+                </div>
+            </div>
+
+            <div class="fallback-controls">
+                <button class="btn" onclick="rotateModel('left')">
+                    <i class="fas fa-undo"></i> Girar
+                </button>
+                <button class="btn" onclick="zoomModel('in')">
+                    <i class="fas fa-search-plus"></i> Aproximar
+                </button>
+                <button class="btn" onclick="zoomModel('out')">
+                    <i class="fas fa-search-minus"></i> Afastar
+                </button>
+                <button class="btn" onclick="addVirtualFlower()">
+                    <i class="fas fa-plus"></i> Flor
+                </button>
+            </div>
+
+            <button class="btn" onclick="closeFallback()" style="margin-top: 30px;">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== SISTEMA AR CONFIÁVEL E TESTADO =====
+
+        // Estados globais simplificados
+        const arState = {
+            active: false
         };
 
-        // Função principal para iniciar AR
-        async function startAR() {
-            try {
-                // Resetar estado anterior
-                await resetARState();
-
-                const arContainer = document.getElementById('arContainer');
-                const calibrationOverlay = document.getElementById('calibrationOverlay');
-                const arLoading = document.getElementById('arLoading');
-
-                // Mostrar interface
-                arContainer.style.display = 'block';
-                arLoading.style.display = 'block';
-                calibrationOverlay.style.display = 'flex';
-
-                arState.isActive = true;
-                arState.isCalibrating = true;
-
-                // Solicitar permissões da câmera
-                const hasPermissions = await requestCameraPermissions();
-                if (!hasPermissions) {
-                    throw new Error('Permissões da câmera negadas');
-                }
-
-                // Inicializar cena AR
-                await initializeARScene();
-
-                // Configurar detecção de superfície
-                setupSurfaceDetection();
-
-                // Ocultar loading após inicialização
-                setTimeout(() => {
-                    arLoading.style.display = 'none';
-                    updateCalibrationText("Aponte a câmera para o chão próximo à lápide e toque para posicionar o memorial");
-                }, 1500);
-
-            } catch (error) {
-                console.error('Erro ao iniciar AR:', error);
-                showARError('Erro ao iniciar experiência 3D. Verifique as permissões da câmera.');
-                await stopAR();
-            }
+        // Iniciar AR
+        function startAR() {
+            if (arState.active) return;
+            
+            const arContainer = document.getElementById('arContainer');
+            arContainer.style.display = 'block';
+            document.body.classList.add('ar-mode');
+            
+            initARScene();
+            arState.active = true;
         }
 
-        // Solicitar permissões da câmera de forma robusta
-        async function requestCameraPermissions() {
-            try {
-                // Verificar se já temos permissões
-                if (arState.permissionsGranted && arState.cameraStream) {
-                    return true;
-                }
-
-                // Parar stream anterior se existir
-                if (arState.cameraStream) {
-                    arState.cameraStream.getTracks().forEach(track => track.stop());
-                }
-
-                // Solicitar nova permissão
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-
-                arState.cameraStream = stream;
-                arState.permissionsGranted = true;
-
-                return true;
-
-            } catch (error) {
-                console.error('Erro ao solicitar permissões:', error);
-                arState.permissionsGranted = false;
-                return false;
-            }
+        // Parar AR
+        function stopAR() {
+            const arContainer = document.getElementById('arContainer');
+            arContainer.style.display = 'none';
+            document.body.classList.remove('ar-mode');
+            arState.active = false;
         }
 
         // Inicializar cena AR
-        async function initializeARScene() {
+        function initARScene() {
             const scene = document.getElementById('arScene');
+            
+            // Configuração otimizada do AR.js
+            scene.setAttribute('arjs', `
+                sourceType: webcam;
+                detectionMode: mono;
+                matrixCodeType: 3x3;
+                debugUIEnabled: false
+            `);
+            
+            // Criar marcador padrão (funciona em qualquer superfície)
+            const marker = document.createElement('a-marker');
+            marker.setAttribute('preset', 'hiro');
+            marker.setAttribute('emitevents', 'true');
+            marker.setAttribute('cursor', 'rayOrigin: mouse');
+            scene.appendChild(marker);
+            
+            // Grupo da árvore
+            const treeGroup = document.createElement('a-entity');
+            treeGroup.id = 'treeGroup';
+            treeGroup.setAttribute('position', '0 0.5 0');
+            treeGroup.setAttribute('scale', '0.01 0.01 0.01'); // Começa pequeno
+            
+            // Animação de crescimento
+            treeGroup.setAttribute('animation', {
+                property: 'scale',
+                to: '0.5 0.5 0.5',
+                dur: 2000,
+                easing: 'easeOutElastic'
+            });
+            marker.appendChild(treeGroup);
+            
+            // Modelo 3D da árvore
+            const treeModel = document.createElement('a-entity');
+            treeModel.setAttribute('gltf-model', '#tree-model');
+            treeModel.setAttribute('scale', '2 2 2');
+            treeGroup.appendChild(treeModel);
+            
+            // Adicionar pontos de fase
+            addLifePhases(treeGroup);
+            
+            // Criar painel de conteúdo
+            createContentPanel(treeGroup);
+        }
 
-            // Aguardar cena estar pronta
-            return new Promise((resolve) => {
-                if (scene.hasLoaded) {
-                    resolve();
-                } else {
-                    scene.addEventListener('loaded', resolve);
+        // Adicionar pontos de fase da vida
+        function addLifePhases(treeGroup) {
+            const phases = [
+                {
+                    id: 'youth',
+                    position: { x: 0.3, y: 2, z: -0.2 },
+                    title: "Juventude",
+                    description: "Paulo durante seus anos de formação na USP.",
+                    photo: "#photo1"
+                },
+                {
+                    id: 'career',
+                    position: { x: -0.4, y: 1.8, z: 0.3 },
+                    title: "Carreira Militar",
+                    description: "Anos de serviço como Tenente da Aeronáutica.",
+                    photo: "#photo2"
+                },
+                {
+                    id: 'family',
+                    position: { x: 0.5, y: 1.2, z: -0.4 },
+                    title: "Família",
+                    description: "Momentos com esposa, filhos e netos.",
+                    photo: "#photo3"
+                },
+                {
+                    id: 'legacy',
+                    position: { x: -0.2, y: 0.8, z: 0.5 },
+                    title: "Legado",
+                    description: "Contribuições e memórias que permanecem.",
+                    photo: "#photo4"
                 }
-            });
-        }
-
-        // Configurar detecção de superfície simplificada
-        function setupSurfaceDetection() {
-            const scene = document.getElementById('arScene');
-
-            // Adicionar event listeners para toque/clique
-            scene.addEventListener('click', handleSurfaceTap);
-            scene.addEventListener('touchstart', handleTouchStart, { passive: false });
-
-            // Configurar raycasting para detecção de superfície
-            setupRaycasting();
-        }
-
-        // Configurar raycasting para melhor detecção
-        function setupRaycasting() {
-            const scene = document.getElementById('arScene');
-
-            // Adicionar componente de raycasting
-            scene.setAttribute('raycaster', {
-                objects: '.ground-plane',
-                showLine: false
-            });
-        }
-
-        // Manipular toque na superfície
-        function handleSurfaceTap(event) {
-            if (!arState.isCalibrating || arState.memorialPlaced) return;
-
-            event.preventDefault();
-            placeMemorialAtSurface(event);
-        }
-
-        // Manipular toque em dispositivos móveis
-        function handleTouchStart(event) {
-            if (!arState.isCalibrating || arState.memorialPlaced) return;
-
-            event.preventDefault();
-
-            if (event.touches.length === 1) {
-                const touch = event.touches[0];
-                placeMemorialAtSurface(touch);
-            }
-        }
-
-        // Posicionar memorial na superfície detectada
-        function placeMemorialAtSurface(event) {
-            const scene = document.getElementById('arScene');
-            const camera = scene.camera;
-
-            if (!camera) return;
-
-            // Obter posição da câmera
-            const cameraPos = camera.el.getAttribute('position');
-            const cameraRot = camera.el.getAttribute('rotation');
-
-            // Calcular posição à frente da câmera (2 metros)
-            const distance = 2;
-            const radY = (cameraRot.y * Math.PI) / 180;
-
-            arState.position = {
-                x: cameraPos.x + Math.sin(radY) * distance,
-                y: 0, // Sempre no chão
-                z: cameraPos.z - Math.cos(radY) * distance
-            };
-
-            // Posicionar memorial
-            updateMemorialPosition();
-
-            // Mostrar memorial
-            const memorial = document.getElementById('memorialGroup');
-            memorial.setAttribute('visible', 'true');
-
-            arState.memorialPlaced = true;
-            arState.isCalibrating = false;
-
-            // Configurar experiência 360°
-            setup360Experience();
-
-            // Atualizar interface
-            updateCalibrationText("Memorial posicionado! Use gestos para navegar em 360°");
-            showCalibrationComplete();
-        }
-
-        // Configurar experiência 360° otimizada
-        function setup360Experience() {
-            const scene = document.getElementById('arScene');
-            const camera = scene.camera;
-
-            if (!camera) return;
-
-            // Configurar controles touch otimizados para 360°
-            camera.el.setAttribute('look-controls', {
-                enabled: true,
-                hmdEnabled: false,
-                touchEnabled: true,
-                reverseMouseDrag: false,
-                reverseTouchDrag: false
-            });
-
-            // Adicionar controles de movimento limitado
-            camera.el.setAttribute('wasd-controls', {
-                enabled: false // Desabilitar movimento, apenas rotação
-            });
-
-            // Configurar interações
-            setupInteractions();
-
-            // Adicionar indicadores visuais de navegação
-            addNavigationIndicators();
-        }
-
-        // Adicionar indicadores visuais para navegação 360°
-        function addNavigationIndicators() {
-            const arContainer = document.getElementById('arContainer');
-
-            // Criar indicador de navegação
-            const navIndicator = document.createElement('div');
-            navIndicator.id = 'navIndicator';
-            navIndicator.innerHTML = `
-                <div style="position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); 
-                           background: rgba(0,0,0,0.8); color: #c5a47f; padding: 10px 20px; 
-                           border-radius: 20px; text-align: center; font-size: 0.9rem; z-index: 1001;">
-                    <i class="fas fa-hand-paper"></i> Arraste para olhar ao redor<br>
-                    <i class="fas fa-expand-arrows-alt"></i> Pinça para aproximar/afastar
-                </div>
-            `;
-
-            arContainer.appendChild(navIndicator);
-
-            // Remover indicador após 5 segundos
-            setTimeout(() => {
-                if (navIndicator.parentNode) {
-                    navIndicator.remove();
-                }
-            }, 5000);
-        }
-
-        // Configurar interações aprimoradas
-        function setupInteractions() {
-            // Configurar velas interativas
-            setupCandleInteractions();
-
-            // Adicionar botão de flor
-            addFlowerButton();
-
-            // Configurar galeria de fotos
-            setupPhotoGallery();
-        }
-
-        // Configurar interações com velas
-        function setupCandleInteractions() {
-            document.querySelectorAll('.candle').forEach((candle, index) => {
-                candle.addEventListener('click', function () {
-                    toggleCandle(this, index);
-                });
-
-                // Adicionar feedback visual
-                candle.setAttribute('animation__hover', {
-                    property: 'scale',
-                    to: '1.1 1.1 1.1',
-                    startEvents: 'mouseenter',
-                    dur: 200
-                });
-
-                candle.setAttribute('animation__leave', {
-                    property: 'scale',
-                    to: '1 1 1',
-                    startEvents: 'mouseleave',
-                    dur: 200
-                });
-            });
-        }
-
-        // Alternar estado da vela
-        function toggleCandle(candle, index) {
-            const flame = candle.querySelector('.flame');
-            const light = flame.querySelector('[light]');
-            const isLit = light.getAttribute('intensity') > 0;
-
-            if (isLit) {
-                // Apagar vela
-                light.setAttribute('intensity', 0);
-                flame.setAttribute('visible', 'false');
-                updateARInfo(`Vela ${index + 1} apagada`);
-            } else {
-                // Acender vela
-                light.setAttribute('intensity', 2);
-                flame.setAttribute('visible', 'true');
-                flame.setAttribute('animation', {
-                    property: 'rotation',
-                    to: '0 360 0',
-                    dur: 2000,
-                    loop: true,
-                    easing: 'linear'
-                });
-                updateARInfo(`Vela ${index + 1} acesa`);
-            }
-        }
-
-        // Configurar galeria de fotos interativa
-        function setupPhotoGallery() {
-            const photos = document.querySelectorAll('.photo-frame');
-
-            photos.forEach((photo, index) => {
-                photo.addEventListener('click', function () {
-                    showPhotoDetails(index);
-                });
-
-                // Adicionar animação de hover
-                photo.setAttribute('animation__hover', {
-                    property: 'position',
-                    to: '0 0.1 0',
-                    startEvents: 'mouseenter',
-                    dur: 300,
-                    relative: true
-                });
-            });
-        }
-
-        // Mostrar detalhes da foto
-        function showPhotoDetails(photoIndex) {
-            const photoTitles = [
-                'Paulo em sua juventude',
-                'Momentos em família',
-                'Carreira militar'
             ];
 
-            updateARInfo(`Visualizando: ${photoTitles[photoIndex] || 'Foto especial'}`);
+            phases.forEach(phase => {
+                const point = document.createElement('a-entity');
+                point.setAttribute('position', `${phase.position.x} ${phase.position.y} ${phase.position.z}`);
+                point.setAttribute('class', 'life-phase');
+                point.setAttribute('data-phase', phase.id);
+                
+                // Elemento visual (anel)
+                const ring = document.createElement('a-ring');
+                ring.setAttribute('color', '#c5a47f');
+                ring.setAttribute('radius-inner', '0.05');
+                ring.setAttribute('radius-outer', '0.08');
+                point.appendChild(ring);
+                
+                // Animação de pulsação
+                const animation = document.createElement('a-animation');
+                animation.setAttribute('attribute', 'scale');
+                animation.setAttribute('to', '1.2 1.2 1.2');
+                animation.setAttribute('direction', 'alternate');
+                animation.setAttribute('repeat', 'indefinite');
+                animation.setAttribute('dur', '1500');
+                animation.setAttribute('easing', 'easeInOutSine');
+                point.appendChild(animation);
+                
+                // Evento de clique
+                point.addEventListener('click', () => {
+                    showPhaseContent(phase);
+                });
+                
+                treeGroup.appendChild(point);
+            });
         }
 
-        // Adicionar botão de flor aprimorado
-        function addFlowerButton() {
-            if (document.getElementById('flowerBtn')) return;
-
-            const flowerBtn = document.createElement('button');
-            flowerBtn.id = 'flowerBtn';
-            flowerBtn.innerHTML = '<i class="fas fa-seedling"></i> Adicionar Flor';
-            flowerBtn.className = 'ar-btn';
-            flowerBtn.style.cssText = `
-                position: absolute;
-                bottom: 100px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 1001;
-                background: rgba(197, 164, 127, 0.2);
-                border: 2px solid #c5a47f;
-                color: #c5a47f;
-                padding: 12px 25px;
-                border-radius: 25px;
-                font-family: 'Playfair Display', serif;
-                font-size: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
+        // Criar painel de conteúdo
+        function createContentPanel(treeGroup) {
+            const panel = document.createElement('a-entity');
+            panel.id = 'tree-content-panel';
+            panel.setAttribute('position', '0 1.5 -1');
+            panel.setAttribute('visible', 'false');
+            
+            // Conteúdo do painel
+            panel.innerHTML = `
+                <a-plane color="#1a1a1a" opacity="0.9" width="1.2" height="0.8"></a-plane>
+                <a-image id="tree-photo" width="0.8" height="0.5" position="0 0.1 0.01"></a-image>
+                <a-text id="tree-title" value="" align="center" width="1.1" position="0 -0.3 0.01" color="#c5a47f"></a-text>
+                <a-text id="tree-description" value="" align="center" width="1.1" position="0 -0.45 0.01" color="#e0e0e0" wrap-count="30"></a-text>
+                <a-entity position="0.55 -0.35 0.01" class="close-panel">
+                    <a-ring color="#c5a47f" radius-inner="0.03" radius-outer="0.04"></a-ring>
+                    <a-text value="X" color="#c5a47f" align="center" position="0 0 0.01" width="0.2"></a-text>
+                </a-entity>
             `;
-
-            flowerBtn.onclick = addFlower;
-            document.getElementById('arContainer').appendChild(flowerBtn);
-        }
-
-        // Adicionar flor com animação aprimorada
-        function addFlower() {
-            if (arState.flowerCount >= 5) {
-                updateARInfo('Máximo de 5 flores atingido');
-                return;
-            }
-
-            const memorial = document.getElementById('memorialGroup');
-            const flower = document.createElement('a-entity');
-
-            // Posição aleatória ao redor da lápide
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 0.4 + Math.random() * 0.6;
-            const x = Math.sin(angle) * distance;
-            const z = Math.cos(angle) * distance;
-
-            flower.setAttribute('gltf-model', '#rose-model');
-            flower.setAttribute('position', `${x} 0 ${z}`);
-            flower.setAttribute('scale', '0.1 0.1 0.1');
-            flower.setAttribute('rotation', `0 ${Math.random() * 360} 0`);
-
-            // Animação de crescimento
-            flower.setAttribute('animation__grow', {
-                property: 'scale',
-                to: '0.4 0.4 0.4',
-                dur: 1000,
-                easing: 'easeOutBounce'
+            
+            // Evento para fechar o painel
+            panel.querySelector('.close-panel').addEventListener('click', () => {
+                panel.setAttribute('visible', 'false');
             });
-
-            // Animação de balanço suave
-            flower.setAttribute('animation__sway', {
-                property: 'rotation',
-                to: `5 ${Math.random() * 360} 0`,
-                dur: 3000 + Math.random() * 2000,
-                loop: true,
-                dir: 'alternate',
-                easing: 'easeInOutSine'
-            });
-
-            memorial.appendChild(flower);
-            arState.flowerCount++;
-
-            updateARInfo(`Flor adicionada com carinho (${arState.flowerCount}/5)`);
+            
+            treeGroup.appendChild(panel);
         }
 
-        // Atualizar posição do memorial
-        function updateMemorialPosition() {
-            const memorial = document.getElementById('memorialGroup');
-            if (memorial && arState.position) {
-                memorial.setAttribute('position',
-                    `${arState.position.x} ${arState.position.y} ${arState.position.z}`);
-            }
+        // Mostrar conteúdo de uma fase
+        function showPhaseContent(phase) {
+            const panel = document.getElementById('tree-content-panel');
+            document.getElementById('tree-photo').setAttribute('src', phase.photo);
+            document.getElementById('tree-title').setAttribute('value', phase.title);
+            document.getElementById('tree-description').setAttribute('value', phase.description);
+            panel.setAttribute('visible', 'true');
+            
+            // Posicionar perto do ponto clicado
+            panel.setAttribute('position', `${phase.position.x} ${phase.position.y + 0.3} ${phase.position.z - 0.5}`);
         }
 
-        // Atualizar texto de calibração
-        function updateCalibrationText(text) {
-            const calibrationText = document.getElementById('calibrationText');
-            if (calibrationText) {
-                calibrationText.textContent = text;
-            }
-        }
+        // ===== FUNÇÕES GERAIS DO SITE =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar scroll
+            window.addEventListener('scroll', handleScroll);
+            
+            // Configurar lightbox
+            setupLightbox();
+            
+            // Fechar AR ao clicar no botão
+            document.querySelector('.ar-close').addEventListener('click', stopAR);
+        });
 
-        // Mostrar calibração completa
-        function showCalibrationComplete() {
-            const calibrationComplete = document.getElementById('calibrationComplete');
-            if (calibrationComplete) {
-                calibrationComplete.style.display = 'block';
-            }
-        }
-
-        // Ocultar calibração
-        function hideCalibration() {
-            const calibrationOverlay = document.getElementById('calibrationOverlay');
-            if (calibrationOverlay) {
-                calibrationOverlay.style.display = 'none';
-            }
-        }
-
-        // Atualizar informações AR
-        function updateARInfo(message) {
-            const arInfo = document.getElementById('arInfo');
-            if (arInfo) {
-                arInfo.textContent = message;
-
-                // Limpar mensagem após 3 segundos
-                setTimeout(() => {
-                    if (arInfo.textContent === message) {
-                        arInfo.textContent = 'Toque nos elementos para interagir';
-                    }
-                }, 3000);
-            }
-        }
-
-        // Mostrar erro AR
-        function showARError(message) {
-            const arInfo = document.getElementById('arInfo');
-            if (arInfo) {
-                arInfo.style.background = 'rgba(220, 53, 69, 0.8)';
-                arInfo.textContent = message;
-
-                setTimeout(() => {
-                    arInfo.style.background = 'rgba(0, 0, 0, 0.8)';
-                }, 5000);
-            }
-        }
-
-        // Resetar estado AR
-        async function resetARState() {
-            // Parar stream de câmera anterior
-            if (arState.cameraStream) {
-                arState.cameraStream.getTracks().forEach(track => track.stop());
-                arState.cameraStream = null;
-            }
-
-            // Resetar variáveis de estado
-            arState.isActive = false;
-            arState.isCalibrating = false;
-            arState.memorialPlaced = false;
-            arState.flowerCount = 0;
-            arState.position = null;
-
-            // Limpar elementos dinâmicos
-            const flowerBtn = document.getElementById('flowerBtn');
-            if (flowerBtn) flowerBtn.remove();
-
-            const navIndicator = document.getElementById('navIndicator');
-            if (navIndicator) navIndicator.remove();
-
-            // Remover flores
-            document.querySelectorAll('#memorialGroup [gltf-model]').forEach(flower => {
-                if (flower.getAttribute('gltf-model') === '#rose-model') {
-                    flower.remove();
-                }
-            });
-
-            // Ocultar memorial
-            const memorial = document.getElementById('memorialGroup');
-            if (memorial) {
-                memorial.setAttribute('visible', 'false');
-            }
-
-            // Resetar interface
-            const calibrationOverlay = document.getElementById('calibrationOverlay');
-            const calibrationComplete = document.getElementById('calibrationComplete');
-
-            if (calibrationOverlay) calibrationOverlay.style.display = 'none';
-            if (calibrationComplete) calibrationComplete.style.display = 'none';
-        }
-
-        // Parar AR com limpeza completa
-        async function stopAR() {
-            try {
-                const arContainer = document.getElementById('arContainer');
-                if (arContainer) {
-                    arContainer.style.display = 'none';
-                }
-
-                // Resetar estado completamente
-                await resetARState();
-
-                // Forçar limpeza da câmera
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                        stream.getTracks().forEach(track => track.stop());
-                    } catch (e) {
-                        // Ignorar erros de limpeza
-                    }
-                }
-
-                console.log('AR parado com sucesso');
-
-            } catch (error) {
-                console.error('Erro ao parar AR:', error);
-            }
-        }
-
-        // Efeitos de scroll
         function handleScroll() {
             const header = document.getElementById('header');
-            const fadeElements = document.querySelectorAll('.fade-in');
-
-            // Header scroll effect
             if (window.scrollY > 100) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
-
-            // Fade in elements
-            fadeElements.forEach(element => {
-                const elementTop = element.offsetTop;
-                const elementHeight = element.offsetHeight;
-                const windowHeight = window.innerHeight;
-                const scrollTop = window.scrollY;
-
-                if (scrollTop > elementTop - windowHeight + elementHeight / 3) {
-                    element.classList.add('visible');
-                }
-            });
         }
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function () {
-            // Scroll effects
-            window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Initial call
-
-            // AR Button click event
-            document.querySelector('.btn-ar').addEventListener('click', startAR);
-
-            // Smooth scroll para links internos
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-
-                    // Se for o link da AR, chama a função startAR
-                    if (targetId === '#ar') {
-                        startAR();
-                        return;
-                    }
-
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        const headerHeight = document.getElementById('header').offsetHeight;
-                        const targetPosition = target.offsetTop - headerHeight - 20;
-
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-
-            // Mobile menu toggle
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navMenu = document.querySelector('.nav-menu');
-
-            if (mobileToggle && navMenu) {
-                mobileToggle.addEventListener('click', function () {
-                    const isActive = navMenu.classList.toggle('active');
-                    
-                    if (isActive) {
-                        navMenu.style.display = 'flex';
-                        navMenu.style.flexDirection = 'column';
-                        navMenu.style.position = 'absolute';
-                        navMenu.style.top = document.getElementById('header').offsetHeight + 'px';
-                        navMenu.style.left = '0';
-                        navMenu.style.right = '0';
-                        navMenu.style.background = 'rgba(10, 10, 10, 0.98)';
-                        navMenu.style.padding = '20px';
-                        navMenu.style.textAlign = 'center';
-                        navMenu.style.zIndex = '1000';
-                    } else {
-                        navMenu.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Eventos AR
-            const scene = document.getElementById('arScene');
-            scene.addEventListener('click', handleSurfaceTap);
-            scene.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
-                    handleSurfaceTap(e.touches[0]);
-                }
-            }, { passive: true });
-        });
-
-        // Prevenir zoom no iOS
-        document.addEventListener('gesturestart', function (e) {
-            e.preventDefault();
-        });
-
-        // Adicionar efeitos de hover para cards
-        document.querySelectorAll('.momento-card, .depoimento-card').forEach(card => {
-            card.addEventListener('mouseenter', function () {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-                this.style.boxShadow = '0 20px 60px rgba(197, 164, 127, 0.3)';
-            });
-
-            card.addEventListener('mouseleave', function () {
-                this.style.transform = 'translateY(0) scale(1)';
-                this.style.boxShadow = '';
-            });
-        });
-
-        // Lightbox para Momentos Especiais
-        document.querySelectorAll('.momento-image').forEach(img => {
-            img.addEventListener('click', function () {
-                const modal = document.getElementById('imageModal');
-                const modalImg = document.getElementById("modalImage");
-                const captionText = document.getElementById("modalCaption");
-
-                modal.style.display = "block";
-                modalImg.src = this.src;
-
-                // Obter o título e descrição da imagem
-                const card = this.closest('.momento-card');
-                const title = card.querySelector('.momento-title').textContent;
-                const description = card.querySelector('.momento-description').textContent;
-                const date = card.querySelector('.momento-date').textContent;
-
-                captionText.innerHTML = `<h3>${title}</h3><p>${description}</p><p><em>${date}</em></p>`;
-            });
-        });
-
-        // Fechar modal
-        document.querySelector('.close-modal').addEventListener('click', function () {
-            document.getElementById('imageModal').style.display = "none";
-        });
-
-        // Fechar ao clicar fora da imagem
-        window.addEventListener('click', function (event) {
+        function setupLightbox() {
             const modal = document.getElementById('imageModal');
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
+            const modalImg = document.getElementById('modalImage');
+            const closeBtn = document.querySelector('.close-modal');
+
+            document.querySelectorAll('.momento-image').forEach(img => {
+                img.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+        }
     </script>
-    
 </body>
 
 </html>
